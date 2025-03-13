@@ -1,0 +1,10 @@
+<header class="p-8 flex justify-between border-b-2">
+  <h1 class="text-4xl font-extrabold text-student" [ngClass]="headerColor2()"><a routerLink="">{{ headerText2() }}</a></h1>
+  <blearn-button
+    studentText="Switch to Teacher mode"
+    teacherText="Switch to Student mode"
+    studentStyle="bg-teacher text-white"
+    teacherStyle="bg-student text-white"
+    (click)="switchMode()"
+  />
+</header>

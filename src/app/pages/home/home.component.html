@@ -1,0 +1,17 @@
+<div class="p-10 flex justify-between">
+  <h2 class="text-5xl font-bold">Welcome, {{ welcomeName() }}!</h2>
+  <div class="flex justify-around gap-4">
+    @if (modeService.getMode() === 'teacher') {
+      <blearn-button
+        teacherText="Evaluate task"
+        teacherStyle="text-teacher border border-teacher"
+      />
+    }
+    <blearn-button
+      studentText="Import task"
+      teacherText="Create task"
+      studentStyle="bg-student text-white"
+      teacherStyle="bg-teacher text-white"
+    />
+  </div>
+</div>

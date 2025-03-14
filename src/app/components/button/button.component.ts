@@ -12,10 +12,10 @@ import {NgClass} from '@angular/common';
 export class ButtonComponent {
   modeService = inject(ModeService);
 
-  @Input() studentText: string | undefined;
-  @Input() teacherText: string | undefined;
-  @Input() studentStyle: string | undefined;
-  @Input() teacherStyle: string | undefined;
+  @Input() studentText: string = '';
+  @Input() teacherText: string = '';
+  @Input() studentStyle: string = '';
+  @Input() teacherStyle: string = '';
 
   buttonText = computed(() => (this.modeService.getMode() === 'student' ? this.studentText : this.teacherText));
   buttonStyle = computed(() => (this.modeService.getMode() === 'student' ? this.studentStyle : this.teacherStyle));

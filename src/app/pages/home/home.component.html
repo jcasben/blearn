@@ -1,25 +1,31 @@
-<div class="p-10 flex justify-between">
-  @let prefix = "Welcome, ";
-  @let titleStyle = "text-5xl";
-  <blearn-title
-    studentText="{{prefix}}Student!"
-    teacherText="{{prefix}}Teacher!"
-    studentStyle="{{titleStyle}}"
-    teacherStyle="{{titleStyle}}"
-  />
-  <div class="flex justify-around gap-4">
-    @if (modeService.getMode() === 'teacher') {
-      <blearn-button
-        teacherText="Evaluate task"
-        teacherStyle="text-teacher border border-teacher"
-      />
-    }
-    @let buttonStyle = "text-white";
-    <blearn-button
-      studentText="Import task"
-      teacherText="Create task"
-      studentStyle="bg-student {{buttonStyle}}"
-      teacherStyle="bg-teacher {{buttonStyle}}"
+<div class="px-10">
+  <div class="py-20 flex justify-between">
+    @let prefix = "Welcome, ";
+    @let titleStyle = "text-6xl font-extrabold";
+    <blearn-title
+      studentText="{{prefix}}Student!"
+      teacherText="{{prefix}}Teacher!"
+      studentStyle="{{titleStyle}}"
+      teacherStyle="{{titleStyle}}"
     />
+    <div class="flex justify-around gap-4">
+      @if (modeService.getMode() === 'teacher') {
+        <blearn-button
+          teacherText="Evaluate task"
+          teacherStyle="text-teacher border border-teacher"
+        />
+      }
+      @let buttonStyle = "text-white";
+      <blearn-button
+        studentText="Import task"
+        teacherText="Create task"
+        studentStyle="bg-student {{buttonStyle}}"
+        teacherStyle="bg-teacher {{buttonStyle}}"
+      />
+    </div>
+  </div>
+  <div>
+    <blearn-activity-list></blearn-activity-list>
   </div>
 </div>
+

@@ -1,5 +1,14 @@
 <header class="p-8 flex justify-between border-b-2">
-  <h1 class="text-4xl font-extrabold text-student" [ngClass]="headerColor()"><a routerLink="">{{ headerText() }}</a></h1>
+  @let style = "text-4xl font-extrabold";
+
+  <a routerLink="">
+    <blearn-title
+      studentText="BLearn"
+      teacherText="BLearn Teachers"
+      studentStyle="{{style}} text-student"
+      teacherStyle="{{style}} text-teacher"
+    />
+  </a>
   <blearn-button
     studentText="Switch to Teacher mode"
     teacherText="Switch to Student mode"

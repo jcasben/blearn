@@ -1,5 +1,12 @@
 <div class="p-10 flex justify-between">
-  <h2 class="text-5xl font-bold">Welcome, {{ welcomeName() }}!</h2>
+  @let prefix = "Welcome, ";
+  @let titleStyle = "text-5xl";
+  <blearn-title
+    studentText="{{prefix}}Student!"
+    teacherText="{{prefix}}Teacher!"
+    studentStyle="{{titleStyle}}"
+    teacherStyle="{{titleStyle}}"
+  />
   <div class="flex justify-around gap-4">
     @if (modeService.getMode() === 'teacher') {
       <blearn-button
@@ -7,11 +14,12 @@
         teacherStyle="text-teacher border border-teacher"
       />
     }
+    @let buttonStyle = "text-white";
     <blearn-button
       studentText="Import task"
       teacherText="Create task"
-      studentStyle="bg-student text-white"
-      teacherStyle="bg-teacher text-white"
+      studentStyle="bg-student {{buttonStyle}}"
+      teacherStyle="bg-teacher {{buttonStyle}}"
     />
   </div>
 </div>

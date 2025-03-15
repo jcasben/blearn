@@ -25,6 +25,11 @@ export class ActivityService {
     this.saveActivities(activities);
   }
 
+  getActivity(id: string): Activity | null {
+    const activities = this.loadActivities();
+    return activities.find((act) => act.id === id) || null;
+  }
+
   deleteActivity(id: string): void {
     const activities = this.loadActivities();
     const updatedActivities = activities.filter((act) => act.id !== id);

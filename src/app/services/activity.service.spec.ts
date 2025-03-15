@@ -6,6 +6,7 @@ import {BrowserStorageService} from './browser-storage.service';
 import {Activity} from '../models/activity';
 
 describe('ActivityService', () => {
+  // TODO Update tests according to new methods
   let service: ActivityService;
   let browserStorageService: jest.Mocked<BrowserStorageService>;
 

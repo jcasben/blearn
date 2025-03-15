@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, effect, inject, OnInit, signal} from '@angular/core';
 import {ModeService} from "../../services/mode.service";
 import {ButtonComponent} from '../../components/button/button.component';
 import {TitleComponent} from '../../components/title/title.component';
@@ -20,12 +20,25 @@ export class HomeComponent {
   protected modeService = inject(ModeService);
   protected activityService = inject(ActivityService);
 
-  createActivity() {
-    const newActivity: Activity = {
-     id: genUniqueId(),
-     title: 'Untitled',
-     description: '',
-     dueDate: '',
+  protected activityList = signal<Activity[]>([]);
+
+  constructor() {
+    effect(() => {
+      this.modeService.getMode();
+      this.activityList.set(this.activityService.loadActivities());
+    });
+  }
+
+  addActivity() {
+    if (this.modeService.getMode() === 'teacher') {
+      const newActivity: Activity = {
+        id: genUniqueId(),
+        title: 'Untitled',
+        description: '',
+        dueDate: '',
+      };
+      this.activityService.addActivity(newActivity);
+      this.activityList.set(this.activityService.loadActivities());
     }
   }
 }

@@ -12,7 +12,7 @@
       @if (modeService.getMode() === 'teacher') {
         <blearn-button
           teacherText="Evaluate task"
-          teacherStyle="text-teacher border border-teacher"
+          teacherStyle="text-teacher border-2 border-teacher"
         />
       }
       @let buttonStyle = "text-white";
@@ -21,11 +21,12 @@
         teacherText="Create task"
         studentStyle="bg-student {{buttonStyle}}"
         teacherStyle="bg-teacher {{buttonStyle}}"
+        (click)="addActivity()"
       />
     </div>
   </div>
   <div>
-    <blearn-activity-list></blearn-activity-list>
+    <blearn-activity-list [activityList]="activityList"/>
   </div>
 </div>
 

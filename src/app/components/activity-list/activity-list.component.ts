@@ -1,39 +1,16 @@
-import { Component } from '@angular/core';
+import {Component, Input, signal} from '@angular/core';
 import {Activity} from '../../models/activity';
 import {ActivityComponent} from '../activity/activity.component';
+import {TitleComponent} from '../title/title.component';
 
 @Component({
   selector: 'blearn-activity-list',
   imports: [
-    ActivityComponent
+    ActivityComponent,
+    TitleComponent
   ],
   templateUrl: './activity-list.component.html',
 })
 export class ActivityListComponent {
-  protected activityList: Activity[] = [
-    {
-      id: '1',
-      title: 'Title',
-      description: 'Description',
-      dueDate: ''
-    },
-    {
-      id: '2',
-      title: 'Title',
-      description: 'Description',
-      dueDate: ''
-    },
-    {
-      id: '3',
-      title: 'Title',
-      description: 'Description',
-      dueDate: ''
-    },
-    {
-      id: '4',
-      title: 'Title',
-      description: 'Description',
-      dueDate: ''
-    },
-  ]
+  @Input() activityList = signal<Activity[]>([]);
 }

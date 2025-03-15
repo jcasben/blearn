@@ -1,0 +1,11 @@
+<div class="">
+  @let style = "text-3xl p-8";
+  <blearn-title
+     studentText="{{activity()?.title}}"
+     teacherText="{{activity()?.title}}"
+     studentStyle="{{style}}"
+     teacherStyle="{{style}}"
+  />
+  <p>{{activity()?.description}}</p>
+  <blearn-blockly-editor/>
+</div>

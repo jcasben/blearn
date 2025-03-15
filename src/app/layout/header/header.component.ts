@@ -17,6 +17,7 @@ export class HeaderComponent {
   private modeService = inject(ModeService);
 
   switchMode() {
+    if (!confirm("Are you sure that you want to change modes?")) return;
     const nextMode = this.modeService.getMode() === 'student' ? 'teacher' : 'student';
     this.modeService.setMode(nextMode);
   }

@@ -1,20 +1,22 @@
-import {inject, Injectable} from '@angular/core';
+import {computed, inject, Injectable} from '@angular/core';
 import {BrowserStorageService} from './browser-storage.service';
 import {Activity} from '../models/activity';
+import {ModeService} from './mode.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActivityService {
-  private readonly storageKey = "studentActivities";
   private browserStorageService = inject(BrowserStorageService);
+  private modeService = inject(ModeService);
+  private readonly storageKey = computed(() => (this.modeService.getMode() === 'student' ? 'studentActivities' : 'teacherActivities'));
 
   saveActivities(activities: Activity[]): void {
-    this.browserStorageService.saveData(this.storageKey, activities);
+    this.browserStorageService.saveData(this.storageKey(), activities);
   }
 
   loadActivities(): Activity[] {
-    return this.browserStorageService.loadData(this.storageKey) || [];
+    return this.browserStorageService.loadData(this.storageKey()) || [];
   }
 
   addActivity(activity: Activity): void {

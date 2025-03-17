@@ -36,6 +36,7 @@ export class HomeComponent {
         title: 'Untitled',
         description: '',
         dueDate: '',
+        workspace: '{}',
       };
       this.activityService.addActivity(newActivity);
       this.activityList.set(this.activityService.loadActivities());

@@ -30,6 +30,15 @@ export class ActivityService {
     return activities.find((act) => act.id === id) || null;
   }
 
+  updateActivity(id: string, updatedActivity: Activity) {
+    const activities = this.loadActivities();
+    const index = activities.findIndex((act) => act.id === id);
+
+    if (index === -1) return;
+    activities[index] = {...activities[index], ...updatedActivity};
+    this.saveActivities(activities);
+  }
+
   deleteActivity(id: string): void {
     const activities = this.loadActivities();
     const updatedActivities = activities.filter((act) => act.id !== id);

@@ -1,16 +1,17 @@
-import {Component, computed, inject} from '@angular/core';
+import {Component, computed, inject, signal, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ActivityService} from '../../services/activity.service';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {map} from 'rxjs';
 import {BlocklyEditorComponent} from '../../components/blockly-editor/blockly-editor.component';
-import {TitleComponent} from '../../components/title/title.component';
+import {Activity} from '../../models/activity';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'blearn-activity-detail',
   imports: [
     BlocklyEditorComponent,
-    TitleComponent
+    FormsModule
   ],
   templateUrl: './activity-detail.component.html',
 })
@@ -19,25 +20,46 @@ export class ActivityDetailComponent {
   private activityService = inject(ActivityService);
   private router = inject(Router);
 
+  @ViewChild(BlocklyEditorComponent) blocklyEditorComponent!: BlocklyEditorComponent;
+
   private activityId = toSignal(
     this.route.paramMap.pipe(
       map(params => params.get('id') || null)
     )
   );
 
-  protected activity = computed(() => {
-    const id = this.activityId();
-    if (!id) {
-      this.router.navigate(['/']).then();
-      return null;
-    }
+  protected activity = signal<Activity | null>(null);
 
-    const activity = this.activityService.getActivity(id);
-    if (!activity) {
-      this.router.navigate(['/']).then();
-      return null;
-    }
+  constructor() {
+    const computedActivity = computed(() => {
+      const id = this.activityId();
+      if (!id) {
+        this.router.navigate(['/']).then();
+        return null;
+      }
 
-    return activity;
-  });
+      const activity = this.activityService.getActivity(id);
+      if (!activity) {
+        this.router.navigate(['/']).then();
+        return null;
+      }
+
+      return activity;
+    });
+
+    this.activity.set(computedActivity());
+  }
+
+  updateTitle(newTitle: string) {
+    if (this.activity()) {
+      this.activity.set({ ...this.activity()!, title: newTitle });
+      this.activityService.updateActivity(this.activityId()!, this.activity()!);
+    }
+  }
+
+  saveWorkspace() {
+    const workspaceJSON = this.blocklyEditorComponent.saveWorkspaceAsJson();
+    this.activity.set({ ...this.activity()!, workspace: workspaceJSON });
+    this.activityService.updateActivity(this.activityId()!, this.activity()!);
+  }
 }

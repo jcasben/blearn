@@ -3,4 +3,5 @@ export interface Activity {
   title: string,
   description: string,
   dueDate: string,
+  workspace: string,
 }

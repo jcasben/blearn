@@ -1,11 +1,10 @@
 <div class="">
-  @let style = "text-3xl p-8";
-  <blearn-title
-     studentText="{{activity()?.title}}"
-     teacherText="{{activity()?.title}}"
-     studentStyle="{{style}}"
-     teacherStyle="{{style}}"
-  />
-  <p>{{activity()?.description}}</p>
-  <blearn-blockly-editor/>
+  <input class="m-8 p-2 border-4 rounded-lg bg-gray-50 text-4xl"
+         type="text"
+         [ngModel]="activity()?.title"
+         (ngModelChange)="updateTitle($event)"
+  >
+  <p>{{ activity()?.description }}</p>
+  <button (click)="saveWorkspace()">Save Workspace</button>
+  <blearn-blockly-editor [workspaceJSON]="activity()!.workspace"/>
 </div>

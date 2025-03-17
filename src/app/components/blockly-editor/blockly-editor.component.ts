@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import * as Blockly from 'blockly';
 import 'blockly/blocks';
 
@@ -9,9 +9,11 @@ import 'blockly/blocks';
 })
 export class BlocklyEditorComponent implements AfterViewInit {
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
+  @Input() workspaceJSON!: string;
+  private workspace!: Blockly.WorkspaceSvg;
 
   ngAfterViewInit(): void {
-    Blockly.inject(this.blocklyDiv.nativeElement, {
+    this.workspace = Blockly.inject(this.blocklyDiv.nativeElement, {
       toolbox: {
         kind: 'flyoutToolbox',
         contents: [
@@ -46,5 +48,12 @@ export class BlocklyEditorComponent implements AfterViewInit {
       trashcan: true,
       scrollbars: true,
     });
+    const jsonWorkspace = JSON.parse(this.workspaceJSON);
+    Blockly.serialization.workspaces.load(jsonWorkspace, this.workspace);
+  }
+
+  saveWorkspaceAsJson(): string {
+    const jsonWorkspace = Blockly.serialization.workspaces.save(this.workspace);
+    return JSON.stringify(jsonWorkspace);
   }
 }

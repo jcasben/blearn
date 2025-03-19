@@ -1,4 +1,4 @@
-import {Component, computed, inject, Input, signal} from '@angular/core';
+import {Component, computed, inject, Input} from '@angular/core';
 import {ModeService} from '../../services/mode.service';
 import {NgClass} from '@angular/common';
 

@@ -1,6 +1,7 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, ElementRef, HostListener, inject, Input, ViewChild} from '@angular/core';
 import {Activity} from '../../models/activity';
-import {Router, RouterLink} from '@angular/router';
+import {RouterLink} from '@angular/router';
+import {ActivityService} from '../../services/activity.service';
 
 @Component({
   selector: 'blearn-activity',
@@ -10,10 +11,33 @@ import {Router, RouterLink} from '@angular/router';
   templateUrl: './activity.component.html',
 })
 export class ActivityComponent {
-  private router = inject(Router);
+  protected activityService = inject(ActivityService);
+
   @Input() activity!: Activity
 
-  navigateToDetail() {
-    this.router.navigate([`/activity/${this.activity.id}`]).then();
+  @ViewChild('menuButton') menuButton!: ElementRef;
+  @ViewChild('dropdown') dropdownMenu!: ElementRef;
+
+  menuOpen: boolean = false;
+
+  toggleMenu() {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onClick(event: Event) {
+    if (
+      this.menuButton && !this.menuButton.nativeElement.contains(event.target) &&
+      this.dropdownMenu && !this.dropdownMenu.nativeElement.contains(event.target)
+    ) {
+      this.menuOpen = false;
+    }
+  }
+
+  deleteActivity() {
+    if (confirm(`Are you sure that you want to delete "${this.activity.title}"?`)) {
+      this.activityService.deleteActivity(this.activity.id);
+    }
+    this.toggleMenu();
   }
 }

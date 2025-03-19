@@ -8,14 +8,18 @@
       studentStyle="{{titleStyle}}"
       teacherStyle="{{titleStyle}}"
     />
-    <div class="flex justify-around gap-4">
+    <div class="flex justify-around gap-4 my-auto">
+      @let buttonStyle = "text-white";
+
       @if (modeService.getMode() === 'teacher') {
         <blearn-button
           teacherText="Evaluate task"
           teacherStyle="text-teacher border-2 border-teacher"
         />
+      } @else {
+        <input #fileInput type="file" (change)="onFileSelected($event)" accept=".blearn" hidden>
       }
-      @let buttonStyle = "text-white";
+
       <blearn-button
         studentText="Import task"
         teacherText="Create task"

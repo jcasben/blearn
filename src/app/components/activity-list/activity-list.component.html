@@ -9,7 +9,10 @@
   />
   <div class="my-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-items-center">
     @for (activity of activityList(); track activity.id) {
-      <blearn-activity [activity]="activity"/>
+      <blearn-activity
+        [activity]="activity"
+        (deleteActivityEmitter)="onDeleteActivity($event)"
+      />
     } @empty {
       <div>
         <p>You haven't worked in any tasks yet in this browser</p>

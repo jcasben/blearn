@@ -30,7 +30,7 @@
     </div>
   </div>
   <div>
-    <blearn-activity-list [activityList]="activityList"/>
+    <blearn-activity-list [activityList]="activityList" (deleteActivityEmitter)="deleteActivity($event)"/>
   </div>
 </div>
 

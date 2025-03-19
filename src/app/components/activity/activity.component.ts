@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, inject, Input, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, inject, Input, Output, ViewChild} from '@angular/core';
 import {Activity} from '../../models/activity';
 import {RouterLink} from '@angular/router';
 import {ActivityService} from '../../services/activity.service';
@@ -14,6 +14,7 @@ export class ActivityComponent {
   protected activityService = inject(ActivityService);
 
   @Input() activity!: Activity
+  @Output() deleteActivityEmitter = new EventEmitter<string>();
 
   @ViewChild('menuButton') menuButton!: ElementRef;
   @ViewChild('dropdown') dropdownMenu!: ElementRef;
@@ -36,8 +37,7 @@ export class ActivityComponent {
 
   deleteActivity() {
     if (confirm(`Are you sure that you want to delete "${this.activity.title}"?`)) {
-      this.activityService.deleteActivity(this.activity.id);
+      this.deleteActivityEmitter.emit(this.activity.id);
     }
-    this.toggleMenu();
   }
 }

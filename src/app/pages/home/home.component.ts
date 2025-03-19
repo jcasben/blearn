@@ -47,6 +47,11 @@ export class HomeComponent {
     }
   }
 
+  deleteActivity(id: string) {
+    this.activityService.deleteActivity(id);
+    this.activityList.set(this.activityService.loadActivities());
+  }
+
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
 

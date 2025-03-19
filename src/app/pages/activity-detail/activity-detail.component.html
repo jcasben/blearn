@@ -1,9 +1,30 @@
 <div class="">
-  <input class="m-8 p-2 border-4 rounded-lg bg-gray-50 text-4xl"
-         type="text"
-         [ngModel]="activity()?.title"
-         (ngModelChange)="updateTitle($event)"
-  >
+  <div class="flex justify-between p-8">
+    @if (modeService.getMode() === 'student') {
+      <blearn-title
+        studentText="{{activity()?.title}}"
+        studentStyle="text-4xl p-2"
+      />
+    } @else {
+      <input
+        class="p-2 border-4 rounded-lg bg-gray-50 text-4xl"
+        type="text"
+        [ngModel]="activity()?.title"
+        (ngModelChange)="updateTitle($event)"
+      >
+    }
+    @let style = "text-white";
+    @let buttonText = "Download activity";
+    <blearn-button
+      studentText="{{buttonText}}"
+      teacherText="{{buttonText}}"
+      studentStyle="bg-student {{style}}"
+      teacherStyle="bg-teacher {{style}}"
+      (click)="downloadFile()"
+    />
+  </div>
+
+
   <p>{{ activity()?.description }}</p>
   <button (click)="saveWorkspace()">Save Workspace</button>
   <blearn-blockly-editor [workspaceJSON]="activity()!.workspace"/>

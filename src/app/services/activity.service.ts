@@ -44,4 +44,17 @@ export class ActivityService {
     const updatedActivities = activities.filter((act) => act.id !== id);
     this.saveActivities(updatedActivities);
   }
+
+  downloadActivity(activity: Activity) {
+    const fileName = `${activity.title}.blearn`
+    const content = JSON.stringify(activity);
+
+    const file = new Blob([content], { type: 'application/json' });
+
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(file);
+    link.download = fileName;
+    link.click();
+    link.remove();
+  }
 }

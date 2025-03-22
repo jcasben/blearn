@@ -20,7 +20,7 @@
       teacherText="{{buttonText}}"
       studentStyle="bg-student {{style}}"
       teacherStyle="bg-teacher {{style}}"
-      (click)="downloadFile()"
+      (click)="activityService.downloadActivity(activity()!)"
     />
   </div>
 

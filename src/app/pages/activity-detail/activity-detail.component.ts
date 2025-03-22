@@ -22,7 +22,7 @@ import {ButtonComponent} from '../../components/button/button.component';
 })
 export class ActivityDetailComponent {
   private route = inject(ActivatedRoute);
-  private activityService = inject(ActivityService);
+  protected activityService = inject(ActivityService);
   protected modeService = inject(ModeService);
   private router = inject(Router);
 
@@ -67,18 +67,5 @@ export class ActivityDetailComponent {
     const workspaceJSON = this.blocklyEditorComponent.saveWorkspaceAsJson();
     this.activity.set({ ...this.activity()!, workspace: workspaceJSON });
     this.activityService.updateActivity(this.activityId()!, this.activity()!);
-  }
-
-  downloadFile() {
-    const fileName = `${this.activity()!.title}.blearn`
-    const content = JSON.stringify(this.activity()!);
-
-    const file = new Blob([content], { type: 'application/json' });
-
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(file);
-    link.download = fileName;
-    link.click();
-    link.remove();
   }
 }

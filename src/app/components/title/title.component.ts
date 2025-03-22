@@ -8,7 +8,6 @@ import {NgClass} from '@angular/common';
     NgClass
   ],
   templateUrl: './title.component.html',
-  styleUrl: './title.component.css'
 })
 export class TitleComponent {
   modeService = inject(ModeService);

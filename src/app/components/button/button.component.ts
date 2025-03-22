@@ -1,4 +1,4 @@
-import {Component, computed, inject, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, inject, Input} from '@angular/core';
 import {ModeService} from '../../services/mode.service';
 import {NgClass} from '@angular/common';
 
@@ -8,6 +8,7 @@ import {NgClass} from '@angular/common';
     NgClass
   ],
   templateUrl: './button.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ButtonComponent {
   modeService = inject(ModeService);

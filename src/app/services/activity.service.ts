@@ -11,7 +11,7 @@ export class ActivityService {
   private modeService = inject(ModeService);
   private readonly storageKey = computed(() => (this.modeService.getMode() === 'student' ? 'studentActivities' : 'teacherActivities'));
 
-  saveActivities(activities: Activity[]): void {
+  private saveActivities(activities: Activity[]): void {
     this.browserStorageService.saveData(this.storageKey(), activities);
   }
 

@@ -4,22 +4,25 @@ import {ActivityService} from './activity.service';
 import {beforeEach, describe, it, jest, expect} from '@jest/globals';
 import {BrowserStorageService} from './browser-storage.service';
 import {Activity} from '../models/activity';
+import {ModeService} from './mode.service';
 
 describe('ActivityService', () => {
-  // TODO Update tests according to new methods
   let service: ActivityService;
   let browserStorageService: jest.Mocked<BrowserStorageService>;
+  let modeService: jest.Mocked<ModeService>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         ActivityService,
-        BrowserStorageService
+        BrowserStorageService,
+        ModeService,
       ]
     });
 
     service = TestBed.inject(ActivityService);
-    browserStorageService = TestBed.inject(BrowserStorageService) as jest.Mocked<BrowserStorageService>
+    browserStorageService = TestBed.inject(BrowserStorageService) as jest.Mocked<BrowserStorageService>;
+    modeService = TestBed.inject(ModeService) as jest.Mocked<ModeService>;
 
     browserStorageService.loadData = jest.fn();
     browserStorageService.saveData = jest.fn();
@@ -29,20 +32,40 @@ describe('ActivityService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should save the activities', () => {
+  it('should save the activities in studentActivities when in student mode', () => {
     // given
-    const mockActivities: Activity[] = [{
+    const mockActivities: Activity = {
       id: '1',
       title: 'Activity 1',
       description: 'Description',
-      dueDate: '1/1/2000'
-    }];
+      dueDate: '1/1/2000',
+      workspace: '{}'
+    };
+    modeService.setMode('student');
 
     // when
-    service.saveActivities(mockActivities);
+    service.addActivity(mockActivities);
 
     // then
-    expect(browserStorageService.saveData).toHaveBeenCalledWith('studentActivities', mockActivities);
+    expect(browserStorageService.saveData).toHaveBeenCalledWith('studentActivities', [mockActivities]);
+  })
+
+  it('should save the activities in teacherActivities when in teacher mode', () => {
+    // given
+    const mockActivities: Activity = {
+      id: '1',
+      title: 'Activity 1',
+      description: 'Description',
+      dueDate: '1/1/2000',
+      workspace: '{}'
+    };
+    modeService.setMode('teacher');
+
+    // when
+    service.addActivity(mockActivities);
+
+    // then
+    expect(browserStorageService.saveData).toHaveBeenCalledWith('teacherActivities', [mockActivities]);
   })
 
   it('should load activities', () => {
@@ -51,7 +74,8 @@ describe('ActivityService', () => {
       id: '1',
       title: 'Activity 1',
       description: 'Description',
-      dueDate: '1/1/2000'
+      dueDate: '1/1/2000',
+      workspace: '{}'
     }];
     browserStorageService.loadData.mockReturnValue(mockActivities);
 
@@ -79,13 +103,15 @@ describe('ActivityService', () => {
       id: '2',
       title: 'Activity 2',
       description: 'Description 2',
-      dueDate: '2/2/2000'
+      dueDate: '2/2/2000',
+      workspace: '{}'
     };
     const existingActivities: Activity[] = [{
       id: '1',
       title: 'Activity 1',
       description: 'Description',
-      dueDate: '1/1/2000'
+      dueDate: '1/1/2000',
+      workspace: '{}'
     }];
 
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -99,15 +125,94 @@ describe('ActivityService', () => {
           id: '1',
           title: 'Activity 1',
           description: 'Description',
-          dueDate: '1/1/2000'
+          dueDate: '1/1/2000',
+          workspace: '{}'
         },
         {
           id: '2',
           title: 'Activity 2',
           description: 'Description 2',
-          dueDate: '2/2/2000'
+          dueDate: '2/2/2000',
+          workspace: '{}'
         }
       ]
     );
+  });
+
+  it('should get the correct activity given the id', () => {
+    // given
+    const existingActivities: Activity[] = [
+      {
+        id: '1',
+        title: 'Activity 1',
+        description: 'Description',
+        dueDate: '1/1/2000',
+        workspace: '{}'
+      },
+      {
+        id: '2',
+        title: 'Activity 2',
+        description: 'Description 2',
+        dueDate: '2/2/2000',
+        workspace: '{}'
+      }
+    ];
+    browserStorageService.loadData.mockReturnValue(existingActivities);
+
+    // when
+    const activity = service.getActivity('2');
+
+    // then
+    expect(activity).toEqual(
+      {
+        id: '2',
+        title: 'Activity 2',
+        description: 'Description 2',
+        dueDate: '2/2/2000',
+        workspace: '{}'
+      }
+    );
+  });
+
+  it('should update existing activity', () => {
+    // given
+    const mockActivity: Activity = {
+      id: '1',
+      title: 'Activity 1',
+      description: 'Description',
+      dueDate: '1/1/2000',
+      workspace: '{}'
+    };
+    browserStorageService.loadData.mockReturnValue([mockActivity]);
+
+    // when
+    mockActivity.title = 'Updated Activity';
+    service.updateActivity('1', mockActivity);
+
+    // then
+    expect(service.getActivity('1')).toEqual(mockActivity);
+  });
+
+  it('should delete activity by id', () => {
+    // given
+    let mockActivity: Activity[] = [
+      {
+        id: '1',
+        title: 'Activity 1',
+        description: 'Description',
+        dueDate: '1/1/2000',
+        workspace: '{}'
+      }
+    ];
+    browserStorageService.loadData.mockImplementation(() => mockActivity);
+    browserStorageService.saveData.mockImplementation((_key, newData) => {
+      mockActivity = newData; // Simulates data persistence
+    });
+
+    // when
+    service.deleteActivity('1');
+
+    // then
+    expect(service.loadActivities()).toEqual([]);
   });
 });

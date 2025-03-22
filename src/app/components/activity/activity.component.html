@@ -1,19 +1,30 @@
 <div class="min-h-52 min-w-80 relative">
-  <div class="bg-gray-400 rounded-lg shadow-md w-90 h-52 transition-transform hover:scale-105 hover:cursor-pointer active:scale-95 duration-150" routerLink="/activity/{{activity.id}}">
+  <div
+    class="bg-gray-400 rounded-lg shadow-md w-90 h-52 transition-transform hover:scale-105 hover:cursor-pointer active:scale-95 duration-150"
+    routerLink="/activity/{{activity.id}}">
 
   </div>
   <div class="py-2 px-4">
     <div class="flex justify-between items-center relative">
       <div>
-        <p class="text-lg font-bold">{{activity.title}}</p>
-        <p>Due on {{activity.dueDate}}</p>
+        <p class="text-lg font-bold">{{ activity.title }}</p>
+        <p>Due on {{ activity.dueDate }}</p>
       </div>
       <div class="relative">
         <button #menuButton (click)="toggleMenu()">menu</button>
         @if (menuOpen) {
-          <div #dropdown class="absolute left- mt-2 w-40 bg-white rounded-lg shadow-md transition-opacity duration-200 z-10">
-            <button class="block w-full px-4 py-2 text-left hover:bg-gray-100">Download</button>
-            <button class="block w-full px-4 py-2 text-left hover:bg-gray-100" (click)="deleteActivity()">Delete</button>
+          <div #dropdown
+               class="absolute left- mt-2 w-40 bg-white rounded-lg shadow-md transition-opacity duration-200 z-10">
+            <button
+              class="block w-full px-4 py-2 text-left hover:bg-gray-100"
+              (click)="activityService.downloadActivity(activity)">
+              Download
+            </button>
+            <button
+              class="block w-full px-4 py-2 text-left hover:bg-gray-100"
+              (click)="deleteActivity()">
+              Delete
+            </button>
           </div>
         }
       </div>

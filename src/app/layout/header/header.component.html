@@ -1,4 +1,4 @@
-<header class="p-8 flex justify-between border-b-2 shadow-md">
+<header class="p-8 flex justify-between border-b-2 shadow-md" data-testid="header">
   @let style = "text-4xl font-extrabold";
 
   <a routerLink="">
@@ -15,5 +15,6 @@
     studentStyle="bg-teacher text-white"
     teacherStyle="bg-student text-white"
     (click)="switchMode()"
+    data-testid="button"
   />
 </header>

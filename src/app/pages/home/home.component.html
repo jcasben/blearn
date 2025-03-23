@@ -1,4 +1,4 @@
-<div class="px-10">
+<div class="px-10" data-testid="home-component">
   <div class="py-20 flex justify-between">
     @let prefix = "Welcome, ";
     @let titleStyle = "text-6xl font-extrabold";
@@ -17,7 +17,7 @@
           teacherStyle="text-teacher border-2 border-teacher"
         />
       } @else {
-        <input #fileInput type="file" (change)="onFileSelected($event)" accept=".blearn" hidden>
+        <input #fileInput type="file" (change)="onFileSelected($event)" accept=".blearn" data-testid="file-input" hidden>
       }
 
       <blearn-button
@@ -30,7 +30,11 @@
     </div>
   </div>
   <div>
-    <blearn-activity-list [activityList]="activityList" (deleteActivityEmitter)="deleteActivity($event)"/>
+    <blearn-activity-list
+      [activityList]="activityList"
+      (deleteActivityEmitter)="deleteActivity($event)"
+      data-testid="home-activity-list"
+    />
   </div>
 </div>
 

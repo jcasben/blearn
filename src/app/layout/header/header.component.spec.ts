@@ -1,4 +1,3 @@
-import {beforeEach, describe, expect, it, jest} from '@jest/globals';
 import {ModeService} from '../../services/mode.service';
 import {render, screen} from '@testing-library/angular';
 import {HeaderComponent} from './header.component';
@@ -26,7 +25,7 @@ describe('HeaderComponent', () => {
     });
 
     // when
-    expect(screen.getByTestId('header')).toBeTruthy();
+    expect(screen.getByTestId('header')).toBeInTheDocument();
   });
 
   it('should display correct text in the title and button when in student mode', async () => {
@@ -40,8 +39,8 @@ describe('HeaderComponent', () => {
     });
 
     // then
-    expect(screen.getByText('BLearn')).toBeTruthy();
-    expect(screen.getByText('Switch to Teacher mode')).toBeTruthy();
+    expect(screen.getByText('BLearn')).toBeInTheDocument();
+    expect(screen.getByText('Switch to Teacher mode')).toBeInTheDocument();
   });
 
   it('should display correct text in the title and button when in teacher mode', async () => {
@@ -55,8 +54,8 @@ describe('HeaderComponent', () => {
     });
 
     // then
-    expect(screen.getByText('BLearn Teachers')).toBeTruthy();
-    expect(screen.getByText('Switch to Student mode')).toBeTruthy();
+    expect(screen.getByText('BLearn Teachers')).toBeInTheDocument();
+    expect(screen.getByText('Switch to Student mode')).toBeInTheDocument();
   });
 
   it('should call switchMode when button is clicked and user confirms', async () => {

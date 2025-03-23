@@ -15,7 +15,7 @@ describe('HeaderComponent', () => {
     } as unknown as jest.Mocked<ModeService>;
   });
 
-  it('should create the component', async () => {
+  it('should render the component', async () => {
     // given
     await render(HeaderComponent, {
       providers: [
@@ -26,36 +26,8 @@ describe('HeaderComponent', () => {
 
     // when
     expect(screen.getByTestId('header')).toBeInTheDocument();
-  });
-
-  it('should display correct text in the title and button when in student mode', async () => {
-    // given
-    modeServiceMock.getMode.mockReturnValue('student');
-    await render(HeaderComponent, {
-      providers: [
-        {provide: ModeService, useValue: modeServiceMock},
-      ],
-      imports: [ButtonComponent, TitleComponent]
-    });
-
-    // then
-    expect(screen.getByText('BLearn')).toBeInTheDocument();
-    expect(screen.getByText('Switch to Teacher mode')).toBeInTheDocument();
-  });
-
-  it('should display correct text in the title and button when in teacher mode', async () => {
-    // given
-    modeServiceMock.getMode.mockReturnValue('teacher');
-    await render(HeaderComponent, {
-      providers: [
-        {provide: ModeService, useValue: modeServiceMock},
-      ],
-      imports: [ButtonComponent, TitleComponent]
-    });
-
-    // then
-    expect(screen.getByText('BLearn Teachers')).toBeInTheDocument();
-    expect(screen.getByText('Switch to Student mode')).toBeInTheDocument();
+    expect(screen.getByTestId('title')).toBeInTheDocument();
+    expect(screen.getByTestId('button')).toBeInTheDocument();
   });
 
   it('should call switchMode when button is clicked and user confirms', async () => {

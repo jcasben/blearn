@@ -39,6 +39,7 @@ export class HomeComponent {
         description: '',
         dueDate: '',
         workspace: '{}',
+        toolbox: '{"kind": "flyoutToolbox", "contents": [{ "kind": "", "text": "", "callbackKey": ""}, {"kind": "", "type": ""}]}'
       };
       this.activityService.addActivity(newActivity);
       this.activityList.set(this.activityService.loadActivities());
@@ -88,6 +89,7 @@ export class HomeComponent {
       description: jsonData.description,
       dueDate: jsonData.dueDate,
       workspace: jsonData.workspace,
+      toolbox: jsonData.toolbox,
     }
   }
 }

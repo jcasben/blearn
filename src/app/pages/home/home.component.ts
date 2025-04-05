@@ -39,7 +39,10 @@ export class HomeComponent {
         description: '',
         dueDate: '',
         workspace: '{}',
-        toolbox: '{"kind": "flyoutToolbox", "contents": [{ "kind": "", "text": "", "callbackKey": ""}, {"kind": "", "type": ""}]}'
+        toolboxInfo: {
+          toolboxDefinition: '{"kind": "flyoutToolbox", "contents": [{ "kind": "", "text": "", "callbackKey": ""}, {"kind": "", "type": ""}]}',
+          BLOCK_LIMITS: {}
+        }
       };
       this.activityService.addActivity(newActivity);
       this.activityList.set(this.activityService.loadActivities());
@@ -89,7 +92,7 @@ export class HomeComponent {
       description: jsonData.description,
       dueDate: jsonData.dueDate,
       workspace: jsonData.workspace,
-      toolbox: jsonData.toolbox,
+      toolboxInfo: jsonData.toolboxInfo,
     }
   }
 }

@@ -40,7 +40,10 @@ describe('ActivityService', () => {
       description: 'Description',
       dueDate: '1/1/2000',
       workspace: '{}',
-      toolbox: '{}'
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     modeService.setMode('student');
 
@@ -59,7 +62,10 @@ describe('ActivityService', () => {
       description: 'Description',
       dueDate: '1/1/2000',
       workspace: '{}',
-      toolbox: '{}'
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     modeService.setMode('teacher');
 
@@ -78,7 +84,10 @@ describe('ActivityService', () => {
       description: 'Description',
       dueDate: '1/1/2000',
       workspace: '{}',
-      toolbox: '{}'
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     }];
     browserStorageService.loadData.mockReturnValue(mockActivities);
 
@@ -108,7 +117,10 @@ describe('ActivityService', () => {
       description: 'Description 2',
       dueDate: '2/2/2000',
       workspace: '{}',
-      toolbox: '{}'
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     const existingActivities: Activity[] = [{
       id: '1',
@@ -116,7 +128,10 @@ describe('ActivityService', () => {
       description: 'Description',
       dueDate: '1/1/2000',
       workspace: '{}',
-      toolbox: '{}'
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     }];
 
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -132,7 +147,10 @@ describe('ActivityService', () => {
           description: 'Description',
           dueDate: '1/1/2000',
           workspace: '{}',
-          toolbox: '{}'
+          toolbox: {
+            toolboxDefinition: '',
+            BLOCK_LIMITS: {}
+          }
         },
         {
           id: '2',
@@ -140,7 +158,10 @@ describe('ActivityService', () => {
           description: 'Description 2',
           dueDate: '2/2/2000',
           workspace: '{}',
-          toolbox: '{}'
+          toolbox: {
+            toolboxDefinition: '',
+            BLOCK_LIMITS: {}
+          }
         }
       ]
     );
@@ -155,7 +176,10 @@ describe('ActivityService', () => {
         description: 'Description',
         dueDate: '1/1/2000',
         workspace: '{}',
-        toolbox: '{}'
+        toolboxInfo: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       },
       {
         id: '2',
@@ -163,7 +187,10 @@ describe('ActivityService', () => {
         description: 'Description 2',
         dueDate: '2/2/2000',
         workspace: '{}',
-        toolbox: '{}'
+        toolboxInfo: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       }
     ];
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -179,7 +206,10 @@ describe('ActivityService', () => {
         description: 'Description 2',
         dueDate: '2/2/2000',
         workspace: '{}',
-        toolbox: '{}'
+        toolbox: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       }
     );
   });
@@ -192,7 +222,10 @@ describe('ActivityService', () => {
       description: 'Description',
       dueDate: '1/1/2000',
       workspace: '{}',
-      toolbox: '{}'
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     browserStorageService.loadData.mockReturnValue([mockActivity]);
 
@@ -213,7 +246,10 @@ describe('ActivityService', () => {
         description: 'Description',
         dueDate: '1/1/2000',
         workspace: '{}',
-        toolbox: '{}'
+        toolboxInfo: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       }
     ];
     browserStorageService.loadData.mockImplementation(() => mockActivity);

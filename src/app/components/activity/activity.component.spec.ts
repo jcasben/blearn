@@ -20,7 +20,10 @@ describe('ActivityComponent', () => {
     description: 'Description',
     dueDate: '03/03',
     workspace: '{}',
-    toolbox: '{}'
+    toolboxInfo: {
+      toolboxDefinition: '',
+      BLOCK_LIMITS: {}
+    }
   };
 
   it('should toggle the menu when clicking the button', async () => {

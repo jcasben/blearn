@@ -19,7 +19,8 @@ describe('ActivityComponent', () => {
     title: 'Activity 1',
     description: 'Description',
     dueDate: '03/03',
-    workspace: '{}'
+    workspace: '{}',
+    toolbox: '{}'
   };
 
   it('should toggle the menu when clicking the button', async () => {

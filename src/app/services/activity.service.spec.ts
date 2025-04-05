@@ -39,7 +39,8 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolbox: '{}'
     };
     modeService.setMode('student');
 
@@ -57,7 +58,8 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolbox: '{}'
     };
     modeService.setMode('teacher');
 
@@ -75,7 +77,8 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolbox: '{}'
     }];
     browserStorageService.loadData.mockReturnValue(mockActivities);
 
@@ -104,14 +107,16 @@ describe('ActivityService', () => {
       title: 'Activity 2',
       description: 'Description 2',
       dueDate: '2/2/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolbox: '{}'
     };
     const existingActivities: Activity[] = [{
       id: '1',
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolbox: '{}'
     }];
 
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -126,14 +131,16 @@ describe('ActivityService', () => {
           title: 'Activity 1',
           description: 'Description',
           dueDate: '1/1/2000',
-          workspace: '{}'
+          workspace: '{}',
+          toolbox: '{}'
         },
         {
           id: '2',
           title: 'Activity 2',
           description: 'Description 2',
           dueDate: '2/2/2000',
-          workspace: '{}'
+          workspace: '{}',
+          toolbox: '{}'
         }
       ]
     );
@@ -147,14 +154,16 @@ describe('ActivityService', () => {
         title: 'Activity 1',
         description: 'Description',
         dueDate: '1/1/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolbox: '{}'
       },
       {
         id: '2',
         title: 'Activity 2',
         description: 'Description 2',
         dueDate: '2/2/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolbox: '{}'
       }
     ];
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -169,7 +178,8 @@ describe('ActivityService', () => {
         title: 'Activity 2',
         description: 'Description 2',
         dueDate: '2/2/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolbox: '{}'
       }
     );
   });
@@ -181,7 +191,8 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolbox: '{}'
     };
     browserStorageService.loadData.mockReturnValue([mockActivity]);
 
@@ -201,7 +212,8 @@ describe('ActivityService', () => {
         title: 'Activity 1',
         description: 'Description',
         dueDate: '1/1/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolbox: '{}'
       }
     ];
     browserStorageService.loadData.mockImplementation(() => mockActivity);

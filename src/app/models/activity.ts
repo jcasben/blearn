@@ -4,4 +4,5 @@ export interface Activity {
   description: string,
   dueDate: string,
   workspace: string,
+  toolbox: string
 }

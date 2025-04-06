@@ -17,6 +17,7 @@ export class ButtonComponent {
   @Input() teacherText: string = '';
   @Input() studentStyle: string = '';
   @Input() teacherStyle: string = '';
+  @Input() disabled: boolean = false;
 
   buttonText = computed(() => (this.modeService.getMode() === 'student' ? this.studentText : this.teacherText));
   buttonStyle = computed(() => (this.modeService.getMode() === 'student' ? this.studentStyle : this.teacherStyle));

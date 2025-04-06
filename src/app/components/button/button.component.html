@@ -1,6 +1,10 @@
 <button
   class="py-2 font-semibold px-4 rounded-full transition-transform hover:scale-105 shadow-md active:scale-95 duration-150"
-  [ngClass]="buttonStyle()"
+  [ngClass]="[
+    buttonStyle(),
+    disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
+  ]"
+  [disabled]="disabled"
 >
   {{ buttonText() }}
 </button>

@@ -13,12 +13,14 @@
         <div class="flex flex-row justify-between items-center mx-6">
           <div [id]="block" class="w-full h-28"></div>
           <blearn-button
-            teacherText="Remove"
-            teacherStyle="text-white bg-red-500 mr-2"
-            (click)="addBlock(block)"
+            teacherText="-"
+            teacherStyle="text-white bg-red-500"
+            (click)="removeBlock(block)"
+            [disabled]="!BLOCKS_LIMIT.has(block)"
           />
+          <p class="p-2">{{BLOCKS_LIMIT.get(block) || 0}}</p>
           <blearn-button
-            teacherText="Add"
+            teacherText="+"
             teacherStyle="text-white bg-teacher"
             (click)="addBlock(block)"
           />

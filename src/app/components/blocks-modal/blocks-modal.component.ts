@@ -10,14 +10,9 @@ import * as Blockly from 'blockly';
   templateUrl: './blocks-modal.component.html',
 })
 export class BlocksModalComponent implements AfterViewInit {
-  @Input() toolbox = signal({
-    kind: 'flyoutToolbox',
-    contents: [
-      {kind: '', text: '', callbackKey: ''},
-      {kind: '', type: ''},
-    ]
-  });
-  @Output() blockAdded = new EventEmitter<void>();
+  @Input() BLOCKS_LIMIT: Map<string, number> = new Map<string, number>();
+  @Output() blockAdded = new EventEmitter<string>();
+  @Output() blockRemoved = new EventEmitter<string>();
   @Output() close = new EventEmitter<void>();
 
   protected blockTypes = [
@@ -41,7 +36,12 @@ export class BlocksModalComponent implements AfterViewInit {
     const list = document.querySelector('#list')!;
     this.blockTypes.forEach((block) => {
       const tmpWorkspace = Blockly.inject(document.getElementById(block)!, {
-        toolbox: this.toolbox(),
+        toolbox: {
+          kind: 'flyoutToolbox',
+          contents: [
+            {kind: '', type: ''},
+          ]
+        },
         readOnly: true,
         renderer: 'Zelos',
         scrollbars: false,
@@ -69,14 +69,11 @@ export class BlocksModalComponent implements AfterViewInit {
   }
 
   protected addBlock(type: string) {
-    const newToolbox = {
-      ...this.toolbox(),
-      contents: [...this.toolbox().contents, {kind: 'block', type}],
-    };
-    this.toolbox.set(newToolbox);
+    this.blockAdded.emit(type);
+  }
 
-    // Emits an event that a new block has been added to the toolbox
-    this.blockAdded.emit();
+  protected removeBlock(type: string) {
+    this.blockRemoved.emit(type);
   }
 
   protected onClose() {

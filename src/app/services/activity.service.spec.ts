@@ -147,7 +147,7 @@ describe('ActivityService', () => {
           description: 'Description',
           dueDate: '1/1/2000',
           workspace: '{}',
-          toolbox: {
+          toolboxInfo: {
             toolboxDefinition: '',
             BLOCK_LIMITS: {}
           }
@@ -158,7 +158,7 @@ describe('ActivityService', () => {
           description: 'Description 2',
           dueDate: '2/2/2000',
           workspace: '{}',
-          toolbox: {
+          toolboxInfo: {
             toolboxDefinition: '',
             BLOCK_LIMITS: {}
           }
@@ -206,7 +206,7 @@ describe('ActivityService', () => {
         description: 'Description 2',
         dueDate: '2/2/2000',
         workspace: '{}',
-        toolbox: {
+        toolboxInfo: {
           toolboxDefinition: '',
           BLOCK_LIMITS: {}
         }

@@ -28,15 +28,14 @@
   <p>{{ activity()?.description }}</p>
   <button (click)="saveWorkspace()">Save Workspace</button>
   <div class="flex h-screen w-full">
-    <div #blocklyArea class="relative flex-1">
-      <div #blocklyDiv class="absolute w-full h-full"></div>
-    </div>
-    <!--<blearn-blockly-editor
+    <blearn-blockly-editor
+      class="relative flex-1"
       [toolbox]="toolbox"
-      [workspaceJSON]="this.activity()!.workspace"
-      [BLOCKS_LIMITS]="this.BLOCK_LIMITS"
+      [workspaceJSON]="activity()!.workspace"
+      [BLOCKS_LIMITS]="BLOCK_LIMITS"
       (openModal)="openBlocksModal()"
-    />-->
+      (updateLimits)="updateToolboxLimits(workspace)"
+    />
 
     <div class="w-2 bg-gray-300 cursor-ew-resize"></div>
 

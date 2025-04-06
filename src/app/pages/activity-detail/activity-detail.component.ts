@@ -37,7 +37,7 @@ export class ActivityDetailComponent implements AfterViewInit {
   protected modeService = inject(ModeService);
   private router = inject(Router);
 
-  //@ViewChild(BlocklyEditorComponent) blocklyEditorComponent!: BlocklyEditorComponent;
+  @ViewChild(BlocklyEditorComponent) blocklyEditorComponent!: BlocklyEditorComponent;
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
   @ViewChild('blocklyArea') blocklyArea!: ElementRef;
   @ViewChild('modalHost', {read: ViewContainerRef}) modalHost!: ViewContainerRef;
@@ -50,7 +50,7 @@ export class ActivityDetailComponent implements AfterViewInit {
   private offsetX: number = 0;
   private offsetY: number = 0;
 
-  private workspace!: Blockly.WorkspaceSvg;
+  protected workspace!: Blockly.WorkspaceSvg;
   protected toolbox = signal({
     kind: 'flyoutToolbox',
     contents: [
@@ -59,7 +59,7 @@ export class ActivityDetailComponent implements AfterViewInit {
     ]
   });
 
-  private readonly BLOCK_LIMITS: Map<string, number>;
+  protected readonly BLOCK_LIMITS: Map<string, number>;
 
   protected activity = signal<Activity | null>(null);
 
@@ -81,12 +81,11 @@ export class ActivityDetailComponent implements AfterViewInit {
     });
 
     this.activity.set(computedActivity());
-    console.log(this.activity()!.toolboxInfo.BLOCK_LIMITS)
+    this.toolbox.set(JSON.parse(this.activity()!.toolboxInfo.toolboxDefinition));
     this.BLOCK_LIMITS = new Map<string, number>(Object.entries(this.activity()!.toolboxInfo.BLOCK_LIMITS));
-    console.log(this.BLOCK_LIMITS);
   }
 
-  private updateToolboxLimits(workspace: Blockly.WorkspaceSvg) {
+  protected updateToolboxLimits(workspace: Blockly.WorkspaceSvg) {
     const blockCounts = new Map<string, number>();
     workspace.getAllBlocks(false).forEach(block => {
       const type = block.type;
@@ -111,11 +110,11 @@ export class ActivityDetailComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initBlockly();
+    this.workspace = this.blocklyEditorComponent.getWorkspace();
     this.initCanvas();
   }
 
-  private openBlocksModal() {
+  protected openBlocksModal() {
     const modalRef = this.modalHost.createComponent(BlocksModalComponent);
     modalRef.instance.BLOCKS_LIMIT = this.BLOCK_LIMITS;
 
@@ -177,59 +176,6 @@ export class ActivityDetailComponent implements AfterViewInit {
     });
     console.log(this.activity()!);
     this.activityService.updateActivity(this.activityId()!, this.activity()!);
-    //const workspaceJSON = this.blocklyEditorComponent.saveWorkspaceAsJson();
-    //this.activity.set({ ...this.activity()!, workspace: workspaceJSON });
-    //this.activityService.updateActivity(this.activityId()!, this.activity()!);
-  }
-
-  private initBlockly() {
-    this.toolbox.set(JSON.parse(this.activity()!.toolboxInfo.toolboxDefinition));
-
-    if (this.modeService.getMode() === 'teacher') {
-      const newToolbox = {
-        ...this.toolbox(),
-        contents: [
-          {
-            kind: 'button',
-            text: '+ Add Blocks to this toolbox',
-            callbackKey: 'addNewBlock'
-          },
-          ...this.toolbox().contents
-        ],
-      };
-      this.toolbox.set(newToolbox);
-    }
-
-    this.workspace = Blockly.inject(this.blocklyDiv.nativeElement, {
-      toolbox: this.toolbox(),
-      renderer: 'Zelos',
-      grid: {
-        colour: '#ccc',
-        snap: true,
-        spacing: 20,
-        length: 3
-      },
-      trashcan: true,
-      scrollbars: true,
-    });
-
-    this.workspace.addChangeListener((event) => {
-      if (
-        event.type === Blockly.Events.BLOCK_CREATE ||
-        event.type === Blockly.Events.BLOCK_DELETE
-      ) {
-        this.updateToolboxLimits(this.workspace);
-      }
-    })
-
-    this.workspace.registerButtonCallback('addNewBlock', () => {
-      this.openBlocksModal();
-    })
-
-    this.resizeBlockly();
-
-    const jsonWorkspace = JSON.parse(this.activity()!.workspace);
-    Blockly.serialization.workspaces.load(jsonWorkspace, this.workspace);
   }
 
   private resizeBlockly(): void {

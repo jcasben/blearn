@@ -9,10 +9,15 @@ import 'blockly/blocks';
 })
 export class BlocklyEditorComponent implements AfterViewInit {
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
+  @ViewChild('blocklyArea') blocklyArea!: ElementRef;
   @Input() workspaceJSON!: string;
   private workspace!: Blockly.WorkspaceSvg;
 
   ngAfterViewInit(): void {
+    this.initBlockly();
+  }
+
+  private initBlockly() {
     this.workspace = Blockly.inject(this.blocklyDiv.nativeElement, {
       toolbox: {
         kind: 'flyoutToolbox',
@@ -48,6 +53,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
       trashcan: true,
       scrollbars: true,
     });
+
     const jsonWorkspace = JSON.parse(this.workspaceJSON);
     Blockly.serialization.workspaces.load(jsonWorkspace, this.workspace);
   }

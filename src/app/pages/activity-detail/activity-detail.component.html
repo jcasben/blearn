@@ -1,5 +1,5 @@
-<div class="">
-  <div class="flex justify-between p-8">
+<div class="flex flex-col">
+  <div class="flex justify-between items-center p-8 border-b-2 border-student">
     @if (modeService.getMode() === 'student') {
       <blearn-title
         studentText="{{activity()?.title}}"
@@ -13,6 +13,7 @@
         (ngModelChange)="updateTitle($event)"
       >
     }
+
     @let style = "text-white";
     @let buttonText = "Download activity";
     <blearn-button
@@ -24,8 +25,24 @@
     />
   </div>
 
-
   <p>{{ activity()?.description }}</p>
   <button (click)="saveWorkspace()">Save Workspace</button>
-  <blearn-blockly-editor [workspaceJSON]="activity()!.workspace"/>
+  <div class="flex h-screen w-full">
+    <div #blocklyArea class="relative flex-1">
+      <div #blocklyDiv class="absolute w-full h-full"></div>
+    </div>
+    <!--<blearn-blockly-editor
+      [toolbox]="toolbox"
+      [workspaceJSON]="this.activity()!.workspace"
+      [BLOCKS_LIMITS]="this.BLOCK_LIMITS"
+      (openModal)="openBlocksModal()"
+    />-->
+
+    <div class="w-2 bg-gray-300 cursor-ew-resize"></div>
+
+    <div #scene class="flex-1 border-l border-gray-300">
+      <canvas #canvas class="w-full h-full"></canvas>
+    </div>
+  </div>
+  <ng-container #modalHost/>
 </div>

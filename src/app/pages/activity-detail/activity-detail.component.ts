@@ -3,7 +3,7 @@ import {
   Component,
   computed,
   ElementRef,
-  inject,
+  inject, OnDestroy,
   signal,
   ViewChild,
   ViewContainerRef
@@ -20,6 +20,8 @@ import {TitleComponent} from '../../components/title/title.component';
 import {ButtonComponent} from '../../components/button/button.component';
 import * as Blockly from 'blockly';
 import {BlocksModalComponent} from '../../components/blocks-modal/blocks-modal.component';
+import {DescriptionModalComponent} from '../../components/description-modal/description-modal.component';
+import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'blearn-activity-detail',
@@ -28,6 +30,7 @@ import {BlocksModalComponent} from '../../components/blocks-modal/blocks-modal.c
     FormsModule,
     TitleComponent,
     ButtonComponent,
+    NgClass,
   ],
   templateUrl: './activity-detail.component.html',
 })
@@ -38,8 +41,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   private router = inject(Router);
 
   @ViewChild(BlocklyEditorComponent) blocklyEditorComponent!: BlocklyEditorComponent;
-  @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
-  @ViewChild('blocklyArea') blocklyArea!: ElementRef;
   @ViewChild('modalHost', {read: ViewContainerRef}) modalHost!: ViewContainerRef;
   @ViewChild('scene') scene!: ElementRef;
   @ViewChild('canvas') canvas!: ElementRef;
@@ -61,6 +62,11 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
   protected readonly BLOCK_LIMITS: Map<string, number>;
 
+  private activityId = toSignal(
+    this.route.paramMap.pipe(
+      map(params => params.get('id') || null)
+    )
+  );
   protected activity = signal<Activity | null>(null);
 
   constructor() {
@@ -83,30 +89,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.activity.set(computedActivity());
     this.toolbox.set(JSON.parse(this.activity()!.toolboxInfo.toolboxDefinition));
     this.BLOCK_LIMITS = new Map<string, number>(Object.entries(this.activity()!.toolboxInfo.BLOCK_LIMITS));
-  }
-
-  protected updateToolboxLimits(workspace: Blockly.WorkspaceSvg) {
-    const blockCounts = new Map<string, number>();
-    workspace.getAllBlocks(false).forEach(block => {
-      const type = block.type;
-      blockCounts.set(type, (blockCounts.get(type) || 0) + 1);
-    });
-
-    const newToolbox = {
-      kind: 'flyoutToolbox',
-      contents: this.toolbox().contents.map((entry: any) => {
-        if (entry.kind === 'block') {
-          const currentCount = blockCounts.get(entry.type) || 0;
-          const limit = this.BLOCK_LIMITS.get(entry.type);
-          return {
-            ...entry,
-            enabled: limit !== undefined ? currentCount < limit : true,
-          };
-        } else return entry;
-      })
-    }
-
-    workspace.updateToolbox(newToolbox);
   }
 
   ngAfterViewInit(): void {
@@ -158,20 +140,61 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  private activityId = toSignal(
-    this.route.paramMap.pipe(
-      map(params => params.get('id') || null)
-    )
-  );
+  protected openDescriptionModal() {
+    const modalRef = this.modalHost.createComponent(DescriptionModalComponent);
+    modalRef.instance.activity = this.activity;
 
-  updateTitle(newTitle: string) {
+    modalRef.instance.dueDateUpdated.subscribe(dueDate => this.updateDueDate(dueDate));
+    modalRef.instance.descriptionUpdated.subscribe(description => this.updateDescription(description));
+    modalRef.instance.close.subscribe(() => modalRef.destroy());
+  }
+
+  protected updateToolboxLimits(workspace: Blockly.WorkspaceSvg) {
+    const blockCounts = new Map<string, number>();
+    workspace.getAllBlocks(false).forEach(block => {
+      const type = block.type;
+      blockCounts.set(type, (blockCounts.get(type) || 0) + 1);
+    });
+
+    const newToolbox = {
+      kind: 'flyoutToolbox',
+      contents: this.toolbox().contents.map((entry: any) => {
+        if (entry.kind === 'block') {
+          const currentCount = blockCounts.get(entry.type) || 0;
+          const limit = this.BLOCK_LIMITS.get(entry.type);
+          return {
+            ...entry,
+            enabled: limit !== undefined ? currentCount < limit : true,
+          };
+        } else return entry;
+      })
+    }
+
+    workspace.updateToolbox(newToolbox);
+  }
+
+  protected updateTitle(newTitle: string) {
     if (this.activity()) {
       this.activity.set({...this.activity()!, title: newTitle});
       this.activityService.updateActivity(this.activityId()!, this.activity()!);
     }
   }
 
-  saveWorkspace() {
+  protected updateDueDate(newDueDate: string) {
+    if (this.activity()) {
+      this.activity.set({...this.activity()!, dueDate: newDueDate });
+      this.activityService.updateActivity(this.activityId()!, this.activity()!);
+    }
+  }
+
+  protected updateDescription(newDescription: string) {
+    if (this.activity()) {
+      this.activity.set({...this.activity()!, description: newDescription });
+      this.activityService.updateActivity(this.activityId()!, this.activity()!);
+    }
+  }
+
+  saveWorkspace(onStorage: boolean) {
     const jsonWorkspace = Blockly.serialization.workspaces.save(this.workspace);
     if (onStorage && this.modeService.getMode() === 'teacher') this.toolbox().contents.shift();
     const jsonToolbox = JSON.stringify(this.toolbox());
@@ -182,16 +205,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
       toolboxInfo: {BLOCK_LIMITS: Object.fromEntries(this.BLOCK_LIMITS), toolboxDefinition: jsonToolbox}
     });
     if (onStorage) this.activityService.updateActivity(this.activityId()!, this.activity()!);
-  }
-
-  private resizeBlockly(): void {
-    const blocklyArea = this.blocklyArea.nativeElement;
-    const blocklyDiv = this.blocklyDiv.nativeElement;
-
-    // Ensure Blockly workspace resizes properly with the area
-    blocklyDiv.style.width = `${blocklyArea.offsetWidth}px`;
-    blocklyDiv.style.height = `${blocklyArea.offsetHeight}px`;
-    Blockly.svgResize(this.workspace); // Resize the workspace after adjusting the div size
   }
 
   private initCanvas() {

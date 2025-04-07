@@ -1,18 +1,18 @@
 import {
   AfterViewInit,
   Component,
-  ElementRef, EventEmitter, inject,
+  ElementRef,
+  EventEmitter,
+  inject,
   Input,
-  OnChanges,
-  OnInit, Output,
+  Output,
   signal,
-  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import * as Blockly from 'blockly';
+import {WorkspaceSvg} from 'blockly';
 import 'blockly/blocks';
 import {ModeService} from '../../services/mode.service';
-import {WorkspaceSvg} from 'blockly';
 
 @Component({
   selector: 'blearn-blockly-editor',
@@ -51,7 +51,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
         contents: [
           {
             kind: 'button',
-            text: '+ Add Blocks to this toolbox',
+            text: 'Add / Remove blocks',
             callbackKey: 'addNewBlock'
           },
           ...this.toolbox().contents

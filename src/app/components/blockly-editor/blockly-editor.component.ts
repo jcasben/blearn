@@ -36,6 +36,7 @@ export class BlocklyEditorComponent implements AfterViewInit {
   @Input() BLOCKS_LIMITS: Map<string, number> = new Map<string, number>();
   @Output() openModal = new EventEmitter<void>();
   @Output() updateLimits = new EventEmitter<void>();
+  @Output() saveWorkspace = new EventEmitter<void>();
 
   private workspace!: Blockly.WorkspaceSvg;
 
@@ -79,12 +80,13 @@ export class BlocklyEditorComponent implements AfterViewInit {
       ) {
         this.updateLimits.emit();
       }
-    })
+      this.saveWorkspace.emit();
+    });
 
     this.workspace.registerButtonCallback('addNewBlock', () => {
       //this.openBlocksModal();
       this.openModal.emit();
-    })
+    });
 
     //this.resizeBlockly();
 

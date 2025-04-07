@@ -24,9 +24,6 @@
       (click)="activityService.downloadActivity(activity()!)"
     />
   </div>
-
-  <p>{{ activity()?.description }}</p>
-  <button (click)="saveWorkspace()">Save Workspace</button>
   <div class="flex h-screen w-full">
     <blearn-blockly-editor
       class="relative flex-1"

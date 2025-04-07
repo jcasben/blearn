@@ -31,7 +31,7 @@ import {BlocksModalComponent} from '../../components/blocks-modal/blocks-modal.c
   ],
   templateUrl: './activity-detail.component.html',
 })
-export class ActivityDetailComponent implements AfterViewInit {
+export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
   protected activityService = inject(ActivityService);
   protected modeService = inject(ModeService);
@@ -114,6 +114,10 @@ export class ActivityDetailComponent implements AfterViewInit {
     this.initCanvas();
   }
 
+  ngOnDestroy(): void {
+    this.saveWorkspace(true);
+  }
+
   protected openBlocksModal() {
     const modalRef = this.modalHost.createComponent(BlocksModalComponent);
     modalRef.instance.BLOCKS_LIMIT = this.BLOCK_LIMITS;
@@ -148,7 +152,10 @@ export class ActivityDetailComponent implements AfterViewInit {
 
       this.updateToolboxLimits(this.workspace);
     });
-    modalRef.instance.close.subscribe(() => modalRef.destroy());
+    modalRef.instance.close.subscribe(() => {
+      this.saveWorkspace(false);
+      modalRef.destroy();
+    });
   }
 
   private activityId = toSignal(
@@ -166,7 +173,7 @@ export class ActivityDetailComponent implements AfterViewInit {
 
   saveWorkspace() {
     const jsonWorkspace = Blockly.serialization.workspaces.save(this.workspace);
-    if (this.modeService.getMode() === 'teacher') this.toolbox().contents.shift();
+    if (onStorage && this.modeService.getMode() === 'teacher') this.toolbox().contents.shift();
     const jsonToolbox = JSON.stringify(this.toolbox());
     const workspaceJSON = JSON.stringify(jsonWorkspace);
     this.activity.set({
@@ -174,8 +181,7 @@ export class ActivityDetailComponent implements AfterViewInit {
       workspace: workspaceJSON,
       toolboxInfo: {BLOCK_LIMITS: Object.fromEntries(this.BLOCK_LIMITS), toolboxDefinition: jsonToolbox}
     });
-    console.log(this.activity()!);
-    this.activityService.updateActivity(this.activityId()!, this.activity()!);
+    if (onStorage) this.activityService.updateActivity(this.activityId()!, this.activity()!);
   }
 
   private resizeBlockly(): void {

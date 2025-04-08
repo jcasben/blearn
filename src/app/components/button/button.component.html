@@ -4,7 +4,7 @@
     buttonStyle(),
     disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : ''
   ]"
-  [disabled]="disabled"
+  (click)="onClick()"
 >
   {{ buttonText() }}
 </button>

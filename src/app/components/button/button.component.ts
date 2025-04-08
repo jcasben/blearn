@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, computed, inject, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, computed, EventEmitter, inject, Input, Output} from '@angular/core';
 import {ModeService} from '../../services/mode.service';
 import {NgClass} from '@angular/common';
 
@@ -19,6 +19,12 @@ export class ButtonComponent {
   @Input() teacherStyle: string = '';
   @Input() disabled: boolean = false;
 
+  @Output() clicked = new EventEmitter<void>();
+
   buttonText = computed(() => (this.modeService.getMode() === 'student' ? this.studentText : this.teacherText));
   buttonStyle = computed(() => (this.modeService.getMode() === 'student' ? this.studentStyle : this.teacherStyle));
+
+  protected onClick() {
+    if (!this.disabled) this.clicked.emit();
+  }
 }

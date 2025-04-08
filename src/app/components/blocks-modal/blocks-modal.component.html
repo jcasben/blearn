@@ -15,7 +15,7 @@
           <blearn-button
             teacherText="-"
             teacherStyle="text-white bg-red-500"
-            (click)="removeBlock(block)"
+            (clicked)="removeBlock(block)"
             [disabled]="!BLOCKS_LIMIT.has(block)"
           />
           <p class="p-2">{{BLOCKS_LIMIT.get(block) || 0}}</p>

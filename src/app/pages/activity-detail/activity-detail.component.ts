@@ -24,7 +24,6 @@ import {DescriptionModalComponent} from '../../components/description-modal/desc
 import {NgClass} from '@angular/common';
 import {SceneComponent} from '../../components/scene/scene.component';
 import {javascriptGenerator} from 'blockly/javascript';
-import Interpreter from 'js-interpreter';
 
 @Component({
   selector: 'blearn-activity-detail',

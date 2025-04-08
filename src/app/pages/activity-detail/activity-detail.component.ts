@@ -218,7 +218,10 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     const hasMoreCode = this.interpreter.step();
     if (hasMoreCode) {
       setTimeout(() => this.stepExecution(), 0.5);
-    } else console.log('Execution finished');
+    } else {
+      this.isRunning.set(false);
+      console.log('Execution finished');
+    }
   }
 
   initApi(interpreter: Interpreter, globalObject: any) {

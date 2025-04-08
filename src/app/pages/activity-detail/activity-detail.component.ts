@@ -22,6 +22,9 @@ import * as Blockly from 'blockly';
 import {BlocksModalComponent} from '../../components/blocks-modal/blocks-modal.component';
 import {DescriptionModalComponent} from '../../components/description-modal/description-modal.component';
 import {NgClass} from '@angular/common';
+import {SceneComponent} from '../../components/scene/scene.component';
+import {javascriptGenerator} from 'blockly/javascript';
+import Interpreter from 'js-interpreter';
 
 @Component({
   selector: 'blearn-activity-detail',
@@ -47,12 +50,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   @ViewChild('scene') scene!: ElementRef;
   @ViewChild('canvas') canvas!: ElementRef;
 
-  private ctx: CanvasRenderingContext2D | null = null;
-  private images: Array<{ img: HTMLImageElement, x: number, y: number, width: number, height: number }> = [];
-  private draggingImage: any = null;
-  private offsetX: number = 0;
-  private offsetY: number = 0;
-
   protected workspace!: Blockly.WorkspaceSvg;
   protected toolbox = signal({
     kind: 'flyoutToolbox',
@@ -63,6 +60,9 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   });
 
   protected readonly BLOCK_LIMITS: Map<string, number>;
+
+  private interpreter: Interpreter | null = null;
+  protected isRunning = signal<boolean>(false);
 
   private activityId = toSignal(
     this.route.paramMap.pipe(
@@ -95,7 +95,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.workspace = this.blocklyEditorComponent.getWorkspace();
-    this.initCanvas();
   }
 
   ngOnDestroy(): void {
@@ -184,14 +183,14 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
   protected updateDueDate(newDueDate: string) {
     if (this.activity()) {
-      this.activity.set({...this.activity()!, dueDate: newDueDate });
+      this.activity.set({...this.activity()!, dueDate: newDueDate});
       this.activityService.updateActivity(this.activityId()!, this.activity()!);
     }
   }
 
   protected updateDescription(newDescription: string) {
     if (this.activity()) {
-      this.activity.set({...this.activity()!, description: newDescription });
+      this.activity.set({...this.activity()!, description: newDescription});
       this.activityService.updateActivity(this.activityId()!, this.activity()!);
     }
   }
@@ -209,73 +208,57 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     if (onStorage) this.activityService.updateActivity(this.activityId()!, this.activity()!);
   }
 
-  private initCanvas() {
-    this.ctx = this.canvas.nativeElement.getContext('2d');
+  runInterpreter(code: string) {
+    this.interpreter = new Interpreter(code, this.initApi.bind(this));
+    this.stepExecution();
+  }
 
-    // Initialize the canvas size based on the scene
-    this.canvas.nativeElement.width = this.scene.nativeElement.offsetWidth;
-    this.canvas.nativeElement.height = this.scene.nativeElement.offsetHeight;
+  stepExecution() {
+    if (!this.interpreter || !this.isRunning()) return;
 
-    // Create an image object
-    const img = new Image();
-    img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';  // Replace with your image URL
-    img.onload = () => {
-      // Once the image is loaded, draw it to the canvas
-      this.images.push({img, x: 50, y: 50, width: 100, height: 100});
-      this.drawImages();
+    const hasMoreCode = this.interpreter.step();
+    if (hasMoreCode) {
+      setTimeout(() => this.stepExecution(), 0.5);
+    } else console.log('Execution finished');
+  }
+
+  initApi(interpreter: Interpreter, globalObject: any) {
+    const addFunction = (name: string, fn: Function) => {
+      interpreter.setProperty(
+        globalObject,
+        name,
+        interpreter.createNativeFunction(fn.bind(this.sceneComponent))
+      );
     };
 
-    // Set up mouse event listeners for dragging
-    this.setupMouseEvents();
+    addFunction('moveForward', this.sceneComponent.moveForward);
+    addFunction('moveTo', this.sceneComponent.moveTo);
+    addFunction('setDirection', this.sceneComponent.setDirection)
+    addFunction('turnLeft', this.sceneComponent.turnLeft);
+    addFunction('turnRight', this.sceneComponent.turnRight);
+
+    interpreter.setProperty(
+      globalObject,
+      'waitSeconds',
+      interpreter.createAsyncFunction((seconds: number, callback: Function) => {
+        setTimeout(() => callback(), seconds * 1000);
+      })
+    );
   }
 
-  private setupMouseEvents() {
-    this.canvas.nativeElement.addEventListener('mousedown', (e: MouseEvent) => {
-      const mouseX = e.offsetX;
-      const mouseY = e.offsetY;
+  protected onRunCode() {
+    javascriptGenerator.init(this.workspace);
+    const startBlock = this.workspace.getTopBlocks(true)
+      .find(block => block.type === 'event_start');
 
-      // Check if the mouse click is on one of the images
-      for (let imgObj of this.images) {
-        if (mouseX >= imgObj.x && mouseX <= imgObj.x + imgObj.width && mouseY >= imgObj.y && mouseY <= imgObj.y + imgObj.height) {
-          this.draggingImage = imgObj;
-          this.offsetX = mouseX - imgObj.x;
-          this.offsetY = mouseY - imgObj.y;
-        }
-      }
-    });
-
-    this.canvas.nativeElement.addEventListener('mousemove', (e: MouseEvent) => {
-      if (this.draggingImage) {
-        const mouseX = e.offsetX;
-        const mouseY = e.offsetY;
-
-        // Move the image based on mouse position
-        this.draggingImage.x = mouseX - this.offsetX;
-        this.draggingImage.y = mouseY - this.offsetY;
-
-        this.drawImages();
-      }
-    });
-
-    this.canvas.nativeElement.addEventListener('mouseup', () => {
-      this.draggingImage = null;
-    });
-
-    this.canvas.nativeElement.addEventListener('mouseleave', () => {
-      this.draggingImage = null;
-    });
-  }
-
-
-  private drawImages() {
-    if (!this.ctx) return;
-
-    // Clear the canvas
-    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-
-    // Draw each image on the canvas
-    for (let imgObj of this.images) {
-      this.ctx.drawImage(imgObj.img, imgObj.x, imgObj.y, imgObj.width, imgObj.height);
+    if (!startBlock) {
+      alert('You should start your program with the "Start program" block!');
+      return;
     }
+    const code = javascriptGenerator.blockToCode(startBlock) as string;
+    console.log(code);
+
+    this.isRunning.set(true);
+    this.runInterpreter(code);
   }
 }

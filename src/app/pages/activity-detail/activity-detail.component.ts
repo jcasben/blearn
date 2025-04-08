@@ -31,6 +31,7 @@ import {NgClass} from '@angular/common';
     TitleComponent,
     ButtonComponent,
     NgClass,
+    SceneComponent,
   ],
   templateUrl: './activity-detail.component.html',
 })
@@ -41,6 +42,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   private router = inject(Router);
 
   @ViewChild(BlocklyEditorComponent) blocklyEditorComponent!: BlocklyEditorComponent;
+  @ViewChild(SceneComponent) sceneComponent!: SceneComponent;
   @ViewChild('modalHost', {read: ViewContainerRef}) modalHost!: ViewContainerRef;
   @ViewChild('scene') scene!: ElementRef;
   @ViewChild('canvas') canvas!: ElementRef;

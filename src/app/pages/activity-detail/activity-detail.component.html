@@ -48,9 +48,12 @@
       (saveWorkspace)="saveWorkspace(false)"
     />
     <div [ngClass]="['w-1 cursor-ew-resize', modeService.getMode() === 'student' ? 'bg-student' : 'bg-teacher']"></div>
-    <div #scene class="flex-1">
-      <canvas #canvas class="w-full h-full bg-gray-300"></canvas>
-    </div>
+    <blearn-scene
+      class="flex-1"
+      [isRunning]="isRunning"
+      (runCode)="onRunCode()"
+      (stopCode)="isRunning.set(false)"
+    />
   </div>
 
   <ng-container #modalHost/>

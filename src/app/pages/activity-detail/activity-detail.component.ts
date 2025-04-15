@@ -3,7 +3,8 @@ import {
   Component,
   computed,
   ElementRef,
-  inject, OnDestroy,
+  inject,
+  OnDestroy,
   signal,
   ViewChild,
   ViewContainerRef

@@ -1,5 +1,8 @@
-<div class="">
-  <div class="flex justify-between p-8">
+<div class="flex flex-col">
+  <div [ngClass]="[
+    'flex justify-between items-center p-8 border-b-4',
+    modeService.getMode() === 'student' ? 'border-student' : 'border-teacher'
+  ]">
     @if (modeService.getMode() === 'student') {
       <blearn-title
         studentText="{{activity()?.title}}"
@@ -13,19 +16,45 @@
         (ngModelChange)="updateTitle($event)"
       >
     }
+
     @let style = "text-white";
-    @let buttonText = "Download activity";
-    <blearn-button
-      studentText="{{buttonText}}"
-      teacherText="{{buttonText}}"
-      studentStyle="bg-student {{style}}"
-      teacherStyle="bg-teacher {{style}}"
-      (click)="activityService.downloadActivity(activity()!)"
+    @let downloadText = "Download activity";
+    @let descriptionText = "Description";
+    <div class="flex flex-row justify-around space-x-2">
+      <blearn-button
+        studentText="{{descriptionText}}"
+        teacherText="{{descriptionText}}"
+        studentStyle="bg-student {{style}}"
+        teacherStyle="bg-teacher {{style}}"
+        (click)="openDescriptionModal()"
+      />
+      <blearn-button
+        studentText="{{downloadText}}"
+        teacherText="{{downloadText}}"
+        studentStyle="bg-student {{style}}"
+        teacherStyle="bg-teacher {{style}}"
+        (click)="saveWorkspace(true); activityService.downloadActivity(activity()!)"
+      />
+    </div>
+  </div>
+  <div class="flex h-screen w-full">
+    <blearn-blockly-editor
+      class="relative flex-1"
+      [toolbox]="toolbox"
+      [workspaceJSON]="activity()!.workspace"
+      [BLOCKS_LIMITS]="BLOCK_LIMITS"
+      (openModal)="openBlocksModal()"
+      (updateLimits)="updateToolboxLimits(workspace)"
+      (saveWorkspace)="saveWorkspace(false)"
+    />
+    <div [ngClass]="['w-1 cursor-ew-resize', modeService.getMode() === 'student' ? 'bg-student' : 'bg-teacher']"></div>
+    <blearn-scene
+      class="flex-1"
+      [isRunning]="isRunning"
+      (runCode)="onRunCode()"
+      (stopCode)="isRunning.set(false)"
     />
   </div>
 
-
-  <p>{{ activity()?.description }}</p>
-  <button (click)="saveWorkspace()">Save Workspace</button>
-  <blearn-blockly-editor [workspaceJSON]="activity()!.workspace"/>
+  <ng-container #modalHost/>
 </div>

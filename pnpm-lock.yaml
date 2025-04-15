@@ -3520,6 +3520,10 @@ packages:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
     hasBin: true
 
+  js-interpreter@6.0.1:
+    resolution: {integrity: sha512-XfPw6y1FzFwHcGYB62jzPUoSCoCSIL+dICMjRJx6f8V/AmTczeodDOaVxWc4GU4p7qeN7ieuMXNKxScoaBkJ6A==}
+    hasBin: true
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -9326,6 +9330,10 @@ snapshots:
 
   jiti@1.21.7: {}
 
+  js-interpreter@6.0.1:
+    dependencies:
+      minimist: 1.2.8
+
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.1:
@@ -9679,8 +9687,7 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
-  minimist@1.2.8:
-    optional: true
+  minimist@1.2.8: {}
 
   minipass-collect@2.0.1:
     dependencies:

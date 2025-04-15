@@ -39,7 +39,11 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     modeService.setMode('student');
 
@@ -57,7 +61,11 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     modeService.setMode('teacher');
 
@@ -75,7 +83,11 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     }];
     browserStorageService.loadData.mockReturnValue(mockActivities);
 
@@ -104,14 +116,22 @@ describe('ActivityService', () => {
       title: 'Activity 2',
       description: 'Description 2',
       dueDate: '2/2/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     const existingActivities: Activity[] = [{
       id: '1',
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     }];
 
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -126,14 +146,22 @@ describe('ActivityService', () => {
           title: 'Activity 1',
           description: 'Description',
           dueDate: '1/1/2000',
-          workspace: '{}'
+          workspace: '{}',
+          toolboxInfo: {
+            toolboxDefinition: '',
+            BLOCK_LIMITS: {}
+          }
         },
         {
           id: '2',
           title: 'Activity 2',
           description: 'Description 2',
           dueDate: '2/2/2000',
-          workspace: '{}'
+          workspace: '{}',
+          toolboxInfo: {
+            toolboxDefinition: '',
+            BLOCK_LIMITS: {}
+          }
         }
       ]
     );
@@ -147,14 +175,22 @@ describe('ActivityService', () => {
         title: 'Activity 1',
         description: 'Description',
         dueDate: '1/1/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolboxInfo: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       },
       {
         id: '2',
         title: 'Activity 2',
         description: 'Description 2',
         dueDate: '2/2/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolboxInfo: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       }
     ];
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -169,7 +205,11 @@ describe('ActivityService', () => {
         title: 'Activity 2',
         description: 'Description 2',
         dueDate: '2/2/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolboxInfo: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       }
     );
   });
@@ -181,7 +221,11 @@ describe('ActivityService', () => {
       title: 'Activity 1',
       description: 'Description',
       dueDate: '1/1/2000',
-      workspace: '{}'
+      workspace: '{}',
+      toolboxInfo: {
+        toolboxDefinition: '',
+        BLOCK_LIMITS: {}
+      }
     };
     browserStorageService.loadData.mockReturnValue([mockActivity]);
 
@@ -201,7 +245,11 @@ describe('ActivityService', () => {
         title: 'Activity 1',
         description: 'Description',
         dueDate: '1/1/2000',
-        workspace: '{}'
+        workspace: '{}',
+        toolboxInfo: {
+          toolboxDefinition: '',
+          BLOCK_LIMITS: {}
+        }
       }
     ];
     browserStorageService.loadData.mockImplementation(() => mockActivity);

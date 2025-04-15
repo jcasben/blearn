@@ -4,4 +4,8 @@ export interface Activity {
   description: string,
   dueDate: string,
   workspace: string,
+  toolboxInfo: {
+    BLOCK_LIMITS: { [key: string]: number },
+    toolboxDefinition: string,
+  }
 }

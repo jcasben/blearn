@@ -1,0 +1,31 @@
+<div class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+  <div class="bg-white rounded-lg shadow-xl w-[32rem] max-h-[90vh]">
+    <div class="flex flex-row p-6 justify-between shadow-md">
+      <h2 class="text-4xl">Select the blocks</h2>
+      <blearn-button
+        teacherText="Close"
+        teacherStyle="bg-red-500 text-white"
+        (click)="onClose()"
+      />
+    </div>
+    <div id="list" class="w-full max-h-96 overflow-y-auto pt-2">
+      @for (block of blockTypes; track block) {
+        <div class="flex flex-row justify-between items-center mx-6">
+          <div [id]="block" class="w-full h-28"></div>
+          <blearn-button
+            teacherText="-"
+            teacherStyle="text-white bg-red-500"
+            (clicked)="removeBlock(block)"
+            [disabled]="!BLOCKS_LIMIT.has(block)"
+          />
+          <p class="p-2">{{BLOCKS_LIMIT.get(block) || 0}}</p>
+          <blearn-button
+            teacherText="+"
+            teacherStyle="text-white bg-teacher"
+            (click)="addBlock(block)"
+          />
+        </div>
+      }
+    </div>
+  </div>
+</div>

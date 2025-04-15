@@ -1,0 +1,29 @@
+<div #scene class="h-full w-full">
+  <div class="flex flex-row justify-center">
+    <blearn-button
+      studentText="Run"
+      teacherText="Run"
+      studentStyle="bg-green-500 text-white"
+      teacherStyle="bg-green-500 text-white"
+      (clicked)="runCode.emit()"
+      [disabled]="isRunning()"
+    />
+    <blearn-button
+      studentText="Stop"
+      teacherText="Stop"
+      studentStyle="bg-red-500 text-white"
+      teacherStyle="bg-red-500 text-white"
+      (clicked)="stopCode.emit()"
+      [disabled]="!isRunning()"
+    />
+    @if (modeService.getMode() === 'teacher') {
+      <blearn-button
+        teacherText="Add"
+        teacherStyle="bg-gray-500 text-white"
+        (clicked)="addObject()"
+      />
+    }
+  </div>
+
+  <canvas #canvas class="w-full h-full bg-gray-300"></canvas>
+</div>

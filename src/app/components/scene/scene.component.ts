@@ -1,6 +1,17 @@
-import {AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, signal, ViewChild} from '@angular/core';
-import {SceneObject} from '../../models/SceneObject';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  inject,
+  Input,
+  Output,
+  signal,
+  ViewChild
+} from '@angular/core';
+import {SceneObject} from '../../models/scene-object';
 import {ButtonComponent} from '../button/button.component';
+import {ModeService} from '../../services/mode.service';
 
 @Component({
   selector: 'blearn-scene',
@@ -10,6 +21,8 @@ import {ButtonComponent} from '../button/button.component';
   templateUrl: './scene.component.html',
 })
 export class SceneComponent implements AfterViewInit {
+  protected modeService = inject(ModeService);
+
   @ViewChild('canvas') canvas!: ElementRef;
   @ViewChild('scene') scene!: ElementRef;
 
@@ -18,7 +31,7 @@ export class SceneComponent implements AfterViewInit {
   @Output() stopCode = new EventEmitter<void>();
 
   private ctx: CanvasRenderingContext2D | null = null;
-  private sceneObjects: Array<SceneObject> = [];
+  protected sceneObjects: Array<SceneObject> = [];
   private draggingObject: SceneObject | null = null;
   private offsetX: number = 0;
   private offsetY: number = 0;
@@ -45,6 +58,16 @@ export class SceneComponent implements AfterViewInit {
 
     // Set up mouse event listeners for dragging
     this.setupMouseEvents();
+  }
+
+  protected addObject() {
+    const img = new Image();
+    img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';  // Replace with your image URL
+    img.onload = () => {
+      // Once the image is loaded, draw it to the canvas
+      this.sceneObjects.push({img, x: 50, y: 50, rotation: 0, width: 100, height: 100});
+      this.drawImages();
+    };
   }
 
   private setupMouseEvents() {

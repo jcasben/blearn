@@ -16,6 +16,13 @@
       (clicked)="stopCode.emit()"
       [disabled]="!isRunning()"
     />
+    @if (modeService.getMode() === 'teacher') {
+      <blearn-button
+        teacherText="Add"
+        teacherStyle="bg-gray-500 text-white"
+        (clicked)="addObject()"
+      />
+    }
   </div>
 
   <canvas #canvas class="w-full h-full bg-gray-300"></canvas>

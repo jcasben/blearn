@@ -18,6 +18,7 @@ export class ButtonComponent {
   @Input() studentStyle: string = '';
   @Input() teacherStyle: string = '';
   @Input() disabled: boolean = false;
+  @Input() icon?: string;
 
   @Output() clicked = new EventEmitter<void>();
 

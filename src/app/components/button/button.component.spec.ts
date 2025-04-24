@@ -28,8 +28,10 @@ describe('ButtonComponent', () => {
     });
 
     // then
-    expect(screen.getByText('Student')).toBeInTheDocument();
-    expect(screen.getByText('Student')).toHaveClass('text-blue-500');
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent('Student');
+    expect(button).toHaveClass('text-blue-500');
   });
 
   it('should display teacher text when in teacher mode', async () => {
@@ -47,7 +49,9 @@ describe('ButtonComponent', () => {
     });
 
     // then
-    expect(screen.getByText('Teacher')).toBeInTheDocument();
-    expect(screen.getByText('Teacher')).toHaveClass('text-green-500');
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent('Teacher');
+    expect(button).toHaveClass('text-green-500');
   });
 });

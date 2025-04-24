@@ -32,6 +32,9 @@ importers:
       '@angular/router':
         specifier: ^19.2.3
         version: 19.2.3(@angular/common@19.2.3(@angular/core@19.2.3(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.3(rxjs@7.8.2)(zone.js@0.15.0))(@angular/platform-browser@19.2.3(@angular/animations@19.2.3(@angular/core@19.2.3(rxjs@7.8.2)(zone.js@0.15.0)))(@angular/common@19.2.3(@angular/core@19.2.3(rxjs@7.8.2)(zone.js@0.15.0))(rxjs@7.8.2))(@angular/core@19.2.3(rxjs@7.8.2)(zone.js@0.15.0)))(rxjs@7.8.2)
+      '@fortawesome/fontawesome-free':
+        specifier: ^6.7.2
+        version: 6.7.2
       blockly:
         specifier: ^11.2.2
         version: 11.2.2
@@ -1067,6 +1070,10 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fortawesome/fontawesome-free@6.7.2':
+    resolution: {integrity: sha512-JUOtgFW6k9u4Y+xeIaEiLr3+cjoUPiAuLXoyKOJSia6Duzb7pq+A76P9ZdPDoAoxHdHzq6gE9/jKBGXlZT8FbA==}
+    engines: {node: '>=6'}
 
   '@inquirer/checkbox@4.1.4':
     resolution: {integrity: sha512-d30576EZdApjAMceijXA5jDzRQHT/MygbC+J8I7EqA6f/FRpYxlRtRJbHF8gHeWYeSdOuTEJqonn7QLB1ELezA==}
@@ -3518,10 +3525,6 @@ packages:
 
   jiti@1.21.7:
     resolution: {integrity: sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==}
-    hasBin: true
-
-  js-interpreter@6.0.1:
-    resolution: {integrity: sha512-XfPw6y1FzFwHcGYB62jzPUoSCoCSIL+dICMjRJx6f8V/AmTczeodDOaVxWc4GU4p7qeN7ieuMXNKxScoaBkJ6A==}
     hasBin: true
 
   js-tokens@4.0.0:
@@ -6501,6 +6504,8 @@ snapshots:
   '@esbuild/win32-x64@0.25.1':
     optional: true
 
+  '@fortawesome/fontawesome-free@6.7.2': {}
+
   '@inquirer/checkbox@4.1.4(@types/node@22.13.11)':
     dependencies:
       '@inquirer/core': 10.1.9(@types/node@22.13.11)
@@ -9330,10 +9335,6 @@ snapshots:
 
   jiti@1.21.7: {}
 
-  js-interpreter@6.0.1:
-    dependencies:
-      minimist: 1.2.8
-
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.1:
@@ -9687,7 +9688,8 @@ snapshots:
     dependencies:
       brace-expansion: 2.0.1
 
-  minimist@1.2.8: {}
+  minimist@1.2.8:
+    optional: true
 
   minipass-collect@2.0.1:
     dependencies:

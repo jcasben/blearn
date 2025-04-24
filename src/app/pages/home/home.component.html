@@ -13,6 +13,7 @@
 
       @if (modeService.getMode() === 'teacher') {
         <blearn-button
+          icon="check"
           teacherText="Evaluate task"
           teacherStyle="text-teacher border-2 border-teacher"
         />
@@ -21,6 +22,7 @@
       }
 
       <blearn-button
+        icon="plus"
         studentText="Import task"
         teacherText="Create task"
         studentStyle="bg-student {{buttonStyle}}"

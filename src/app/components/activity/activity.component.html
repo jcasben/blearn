@@ -11,19 +11,23 @@
         <p>Due on {{ activity.dueDate }}</p>
       </div>
       <div class="relative">
-        <button #menuButton (click)="toggleMenu()" data-testid="menu-toggle">menu</button>
+        <button #menuButton (click)="toggleMenu()" data-testid="menu-toggle">
+          <i class="fas fa-ellipsis"></i>
+        </button>
         @if (menuOpen) {
           <div #dropdown
                class="absolute left- mt-2 w-40 bg-white rounded-lg shadow-md transition-opacity duration-200 z-10">
             <button
-              class="block w-full px-4 py-2 text-left hover:bg-gray-100"
+              class="block w-full px-4 py-2 space-x-2 text-left hover:bg-gray-100"
               (click)="activityService.downloadActivity(activity)">
-              Download
+              <i class="fas fa-download"></i>
+              <span>Download</span>
             </button>
             <button
-              class="block w-full px-4 py-2 text-left hover:bg-gray-100"
+              class="block w-full px-4 py-2 space-x-2 text-left hover:bg-gray-100"
               (click)="deleteActivity()">
-              Delete
+              <i class="fas fa-trash"></i>
+              <span>Delete</span>
             </button>
           </div>
         }

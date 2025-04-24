@@ -22,6 +22,7 @@
     @let descriptionText = "Description";
     <div class="flex flex-row justify-around space-x-2">
       <blearn-button
+        icon="file-lines"
         studentText="{{descriptionText}}"
         teacherText="{{descriptionText}}"
         studentStyle="bg-student {{style}}"
@@ -29,6 +30,7 @@
         (click)="openDescriptionModal()"
       />
       <blearn-button
+        icon="download"
         studentText="{{downloadText}}"
         teacherText="{{downloadText}}"
         studentStyle="bg-student {{style}}"

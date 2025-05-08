@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   computed,
-  ElementRef,
   inject,
   OnDestroy,
   signal,
@@ -25,6 +24,8 @@ import {DescriptionModalComponent} from '../../components/description-modal/desc
 import {NgClass} from '@angular/common';
 import {SceneComponent} from '../../components/scene/scene.component';
 import {javascriptGenerator} from 'blockly/javascript';
+import {SceneObject} from '../../models/scene-object';
+import genUniqueId from '../../utils/genUniqueId';
 
 @Component({
   selector: 'blearn-activity-detail',
@@ -47,8 +48,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   @ViewChild(BlocklyEditorComponent) blocklyEditorComponent!: BlocklyEditorComponent;
   @ViewChild(SceneComponent) sceneComponent!: SceneComponent;
   @ViewChild('modalHost', {read: ViewContainerRef}) modalHost!: ViewContainerRef;
-  @ViewChild('scene') scene!: ElementRef;
-  @ViewChild('canvas') canvas!: ElementRef;
 
   protected workspace!: Blockly.WorkspaceSvg;
   protected toolbox = signal({
@@ -58,11 +57,14 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
       {kind: '', type: ''},
     ]
   });
+  protected selectedObject = signal<string | undefined>(undefined);
 
   protected readonly BLOCK_LIMITS: Map<string, number>;
 
-  private interpreter: Interpreter | null = null;
+  private interpreters: Interpreter[] = [];
   protected isRunning = signal<boolean>(false);
+
+  public objectsCode = new Map<string, string>();
 
   private activityId = toSignal(
     this.route.paramMap.pipe(
@@ -91,17 +93,67 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.activity.set(computedActivity());
     this.toolbox.set(JSON.parse(this.activity()!.toolboxInfo.toolboxDefinition));
     this.BLOCK_LIMITS = new Map<string, number>(Object.entries(this.activity()!.toolboxInfo.BLOCK_LIMITS));
+    if (this.activity()!.sceneObjects.length > 0) this.selectSceneObject(this.activity()!.sceneObjects[0].id);
   }
 
   ngAfterViewInit(): void {
     this.workspace = this.blocklyEditorComponent.getWorkspace();
+    const jsonWorkspace = JSON.stringify(Blockly.serialization.workspaces.save(this.workspace));
+    this.activity.set({...this.activity()!, workspace: jsonWorkspace});
   }
 
   ngOnDestroy(): void {
     this.saveWorkspace(true);
   }
 
+  public findSceneObjectById(id: string): SceneObject | undefined {
+    return this.activity()!.sceneObjects.find(obj => obj.id === id);
+  }
+
+  protected createSceneObject() {
+    const img = new Image();
+    img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';
+    img.onload = () => {
+      const newObject: SceneObject = new SceneObject(
+        genUniqueId(),
+        img.src,
+        0,
+        0,
+        0,
+        100,
+        100,
+        this.activity()!.workspace,
+        img
+      );
+
+      Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
+      this.workspace.updateToolbox(this.toolbox());
+
+      this.selectedObject.set(newObject.id);
+
+      console.log(this.objectsCode);
+
+      this.activity()!.sceneObjects.push(newObject);
+      this.sceneComponent.drawImages();
+    }
+  }
+
+  protected selectSceneObject(id: string) {
+    this.saveWorkspace(false);
+    this.selectedObject.set(id);
+
+    const obj = this.findSceneObjectById(id);
+    Blockly.serialization.workspaces.load(JSON.parse(obj!.workspace), this.workspace);
+
+    this.sceneComponent.drawImages();
+  }
+
   protected openBlocksModal() {
+    if (this.activity()!.sceneObjects.length === 0) {
+      alert('You need to create an object to start adding blocks');
+      return;
+    }
+
     const modalRef = this.modalHost.createComponent(BlocksModalComponent);
     modalRef.instance.BLOCKS_LIMIT = this.BLOCK_LIMITS;
 
@@ -196,72 +248,86 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   }
 
   saveWorkspace(onStorage: boolean) {
+    if (this.selectedObject) {
+      javascriptGenerator.init(this.workspace);
+      const startBlock = this.workspace.getTopBlocks(true)
+        .find(block => block.type === 'event_start');
+
+      if (startBlock) {
+        const code = javascriptGenerator.blockToCode(startBlock) as string;
+        this.objectsCode.set(this.selectedObject()!, code);
+      }
+    }
+
     const jsonWorkspace = Blockly.serialization.workspaces.save(this.workspace);
-    if (onStorage && this.modeService.getMode() === 'teacher') this.toolbox().contents.shift();
+    //if (onStorage && this.modeService.getMode() === 'teacher') this.toolbox().contents.shift();
     const jsonToolbox = JSON.stringify(this.toolbox());
     const workspaceJSON = JSON.stringify(jsonWorkspace);
-    this.activity.set({
-      ...this.activity()!,
-      workspace: workspaceJSON,
-      toolboxInfo: {BLOCK_LIMITS: Object.fromEntries(this.BLOCK_LIMITS), toolboxDefinition: jsonToolbox}
+
+    if (this.selectedObject()) {
+      const obj = this.findSceneObjectById(this.selectedObject()!);
+      obj!.workspace = workspaceJSON;
+    }
+    //this.activity.set({
+    //  ...this.activity()!,
+    //  workspace: workspaceJSON,
+    //  toolboxInfo: {BLOCK_LIMITS: Object.fromEntries(this.BLOCK_LIMITS), toolboxDefinition: jsonToolbox}
+    //});
+    //if (onStorage) this.activityService.updateActivity(this.activityId()!, this.activity()!);
+  }
+
+  protected onRunCode() {
+    this.objectsCode.forEach((v, k) => {
+      console.log(k);
+      this.isRunning.set(true);
+      this.runInterpreter(v, k);
     });
-    if (onStorage) this.activityService.updateActivity(this.activityId()!, this.activity()!);
   }
 
-  runInterpreter(code: string) {
-    this.interpreter = new Interpreter(code, this.initApi.bind(this));
-    this.stepExecution();
+  runInterpreter(code: string, id: string) {
+    const interpreterInstance = new Interpreter(code, this.initApi(id));
+    this.stepExecution(interpreterInstance);
   }
 
-  stepExecution() {
-    if (!this.interpreter || !this.isRunning()) return;
+  private initApi(id: string) {
+    return (interpreter: Interpreter, globalObject: any) => {
+      const object = this.findSceneObjectById(id);
+      if (!object) return;
 
-    const hasMoreCode = this.interpreter.step();
+      const addFunction = (name: string, fn: Function) => {
+        interpreter.setProperty(
+          globalObject,
+          name,
+          interpreter.createNativeFunction(fn.bind(object))
+        );
+      };
+
+      addFunction('moveForward', object.moveForward);
+      addFunction('moveTo', object.moveTo);
+      addFunction('setDirection', object.setDirection)
+      addFunction('turnLeft', object.turnLeft);
+      addFunction('turnRight', object.turnRight);
+
+      interpreter.setProperty(
+        globalObject,
+        'waitSeconds',
+        interpreter.createAsyncFunction((seconds: number, callback: Function) => {
+          setTimeout(() => callback(), seconds * 1000);
+        })
+      );
+    };
+  }
+
+  private stepExecution(interpreter: Interpreter) {
+    if (!this.isRunning()) return;
+
+    const hasMoreCode = interpreter.step();
     if (hasMoreCode) {
-      setTimeout(() => this.stepExecution(), 0.5);
+      this.sceneComponent.drawImages();
+      setTimeout(() => this.stepExecution(interpreter), 0.5);
     } else {
       this.isRunning.set(false);
       console.log('Execution finished');
     }
-  }
-
-  initApi(interpreter: Interpreter, globalObject: any) {
-    const addFunction = (name: string, fn: Function) => {
-      interpreter.setProperty(
-        globalObject,
-        name,
-        interpreter.createNativeFunction(fn.bind(this.sceneComponent))
-      );
-    };
-
-    addFunction('moveForward', this.sceneComponent.moveForward);
-    addFunction('moveTo', this.sceneComponent.moveTo);
-    addFunction('setDirection', this.sceneComponent.setDirection)
-    addFunction('turnLeft', this.sceneComponent.turnLeft);
-    addFunction('turnRight', this.sceneComponent.turnRight);
-
-    interpreter.setProperty(
-      globalObject,
-      'waitSeconds',
-      interpreter.createAsyncFunction((seconds: number, callback: Function) => {
-        setTimeout(() => callback(), seconds * 1000);
-      })
-    );
-  }
-
-  protected onRunCode() {
-    javascriptGenerator.init(this.workspace);
-    const startBlock = this.workspace.getTopBlocks(true)
-      .find(block => block.type === 'event_start');
-
-    if (!startBlock) {
-      alert('You should start your program with the "Start program" block!');
-      return;
-    }
-    const code = javascriptGenerator.blockToCode(startBlock) as string;
-    console.log(code);
-
-    this.isRunning.set(true);
-    this.runInterpreter(code);
   }
 }

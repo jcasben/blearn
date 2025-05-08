@@ -1,4 +1,4 @@
-<div #scene class="h-full w-full">
+<div #scene class="flex flex-col h-full w-full">
   <div class="flex flex-row justify-center">
     <blearn-button
       icon="play"
@@ -15,7 +15,7 @@
       teacherText="Stop"
       studentStyle="bg-red-500 text-white"
       teacherStyle="bg-red-500 text-white"
-      (clicked)="stopCode.emit()"
+      (clicked)="isRunning.set(false)"
       [disabled]="!isRunning()"
     />
     @if (modeService.getMode() === 'teacher') {
@@ -28,5 +28,14 @@
     }
   </div>
 
-  <canvas #canvas class="w-full h-full bg-gray-300"></canvas>
+  <div class="flex flex-row space-x-4">
+    @for (obj of sceneObjects; track obj.id) {
+      <img [src]="obj.imgSrc"
+           [alt]="obj.id"
+           [ngClass]="['w-24 h-24 rounded', selectedObject() === obj.id ? 'border-4 border-red-500' : '']"
+           (click)="objectSelected.emit(obj.id)">
+    }
+  </div>
+
+  <canvas #canvas class="w-full h-screen bg-gray-300"></canvas>
 </div>

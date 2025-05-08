@@ -23,7 +23,6 @@ export class BlocklyEditorComponent implements AfterViewInit {
   private modeService = inject(ModeService);
 
   @ViewChild('blocklyDiv') blocklyDiv!: ElementRef;
-  //@ViewChild('blocklyArea') blocklyArea!: ElementRef;
 
   @Input() toolbox = signal({
     kind: 'flyoutToolbox',
@@ -84,11 +83,8 @@ export class BlocklyEditorComponent implements AfterViewInit {
     });
 
     this.workspace.registerButtonCallback('addNewBlock', () => {
-      //this.openBlocksModal();
       this.openModal.emit();
     });
-
-    //this.resizeBlockly();
 
     const jsonWorkspace = JSON.parse(this.workspaceJSON);
     Blockly.serialization.workspaces.load(jsonWorkspace, this.workspace);

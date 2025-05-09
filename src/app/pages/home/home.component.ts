@@ -42,7 +42,8 @@ export class HomeComponent {
         toolboxInfo: {
           toolboxDefinition: '{"kind": "flyoutToolbox", "contents": [{ "kind": "", "text": "", "callbackKey": ""}, {"kind": "", "type": ""}]}',
           BLOCK_LIMITS: {}
-        }
+        },
+        sceneObjects: []
       };
       this.activityService.addActivity(newActivity);
       this.activityList.set(this.activityService.loadActivities());
@@ -93,6 +94,7 @@ export class HomeComponent {
       dueDate: jsonData.dueDate,
       workspace: jsonData.workspace,
       toolboxInfo: jsonData.toolboxInfo,
+      sceneObjects: jsonData.sceneObjects,
     }
   }
 }

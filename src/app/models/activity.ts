@@ -1,3 +1,5 @@
+import {SceneObject} from './scene-object';
+
 export interface Activity {
   id: string,
   title: string,
@@ -7,5 +9,6 @@ export interface Activity {
   toolboxInfo: {
     BLOCK_LIMITS: { [key: string]: number },
     toolboxDefinition: string,
-  }
+  },
+  sceneObjects: SceneObject[]
 }

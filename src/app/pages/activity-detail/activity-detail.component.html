@@ -46,15 +46,19 @@
       [workspaceJSON]="activity()!.workspace"
       [BLOCKS_LIMITS]="BLOCK_LIMITS"
       (openModal)="openBlocksModal()"
-      (updateLimits)="updateToolboxLimits(workspace)"
+      (updateLimits)="updateToolboxLimits()"
       (saveWorkspace)="saveWorkspace(false)"
     />
     <div [ngClass]="['w-1 cursor-ew-resize', modeService.getMode() === 'student' ? 'bg-student' : 'bg-teacher']"></div>
     <blearn-scene
       class="flex-1"
+      [sceneObjects]="this.activity()!.sceneObjects"
       [isRunning]="isRunning"
+      [selectedObject]="selectedObject"
       (runCode)="onRunCode()"
-      (stopCode)="isRunning.set(false)"
+      (sceneObjectsChange)="saveWorkspace(false)"
+      (objectAdded)="createSceneObject()"
+      (objectSelected)="selectSceneObject($event)"
     />
   </div>
 

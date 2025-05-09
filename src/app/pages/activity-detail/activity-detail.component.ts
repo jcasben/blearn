@@ -152,7 +152,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   }
 
   protected selectSceneObject(id: string) {
-    this.saveWorkspace(false);
     this.selectedObject.set(id);
 
     const obj = this.findSceneObjectById(id);
@@ -182,7 +181,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         this.toolbox.set(newToolbox);
       }
 
-      this.updateToolboxLimits(this.workspace);
+      this.updateToolboxLimits();
     });
 
     modalRef.instance.blockRemoved.subscribe(type => {
@@ -198,7 +197,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         }
       } else if (this.BLOCK_LIMITS.has(type) && this.BLOCK_LIMITS.get(type)! > 1) this.BLOCK_LIMITS.set(type, this.BLOCK_LIMITS.get(type)! - 1);
 
-      this.updateToolboxLimits(this.workspace);
+      this.updateToolboxLimits();
     });
     modalRef.instance.close.subscribe(() => {
       this.saveWorkspace(false);
@@ -215,9 +214,9 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     modalRef.instance.close.subscribe(() => modalRef.destroy());
   }
 
-  protected updateToolboxLimits(workspace: Blockly.WorkspaceSvg) {
+  protected updateToolboxLimits() {
     const blockCounts = new Map<string, number>();
-    workspace.getAllBlocks(false).forEach(block => {
+    this.workspace.getAllBlocks(false).forEach(block => {
       const type = block.type;
       blockCounts.set(type, (blockCounts.get(type) || 0) + 1);
     });
@@ -236,7 +235,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
       })
     }
 
-    workspace.updateToolbox(newToolbox);
+    this.workspace.updateToolbox(newToolbox);
   }
 
   protected updateTitle(newTitle: string) {
@@ -261,7 +260,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   }
 
   saveWorkspace(onStorage: boolean) {
-    if (this.selectedObject) {
+    if (this.selectedObject()) {
       javascriptGenerator.init(this.workspace);
       const startBlock = this.workspace.getTopBlocks(true)
         .find(block => block.type === 'event_start');
@@ -273,7 +272,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     }
 
     const jsonWorkspace = Blockly.serialization.workspaces.save(this.workspace);
-    //if (onStorage && this.modeService.getMode() === 'teacher') this.toolbox().contents.shift();
+    if (onStorage && this.modeService.getMode() === 'teacher') this.toolbox().contents.shift();
     const jsonToolbox = JSON.stringify(this.toolbox());
     const workspaceJSON = JSON.stringify(jsonWorkspace);
 
@@ -281,12 +280,14 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
       const obj = this.findSceneObjectById(this.selectedObject()!);
       obj!.workspace = workspaceJSON;
     }
-    //this.activity.set({
-    //  ...this.activity()!,
-    //  workspace: workspaceJSON,
-    //  toolboxInfo: {BLOCK_LIMITS: Object.fromEntries(this.BLOCK_LIMITS), toolboxDefinition: jsonToolbox}
-    //});
-    //if (onStorage) this.activityService.updateActivity(this.activityId()!, this.activity()!);
+    this.activity.set({
+      ...this.activity()!,
+      toolboxInfo: {BLOCK_LIMITS: Object.fromEntries(this.BLOCK_LIMITS), toolboxDefinition: jsonToolbox}
+    });
+    if (onStorage) {
+      this.activity()!.sceneObjects.map(obj => obj.img = undefined);
+      this.activityService.updateActivity(this.activityId()!, this.activity()!);
+    }
   }
 
   protected onRunCode() {

@@ -79,7 +79,6 @@ export class SceneComponent implements AfterViewInit {
       const mouseX = e.offsetX;
       const mouseY = e.offsetY;
 
-      // Check if the mouse click is on one of the images
       for (let sceneObj of this.sceneObjects) {
         if (mouseX >= sceneObj.x && mouseX <= sceneObj.x + sceneObj.width && mouseY >= sceneObj.y && mouseY <= sceneObj.y + sceneObj.height) {
           this.draggingObject = sceneObj;
@@ -132,7 +131,16 @@ export class SceneComponent implements AfterViewInit {
         this.ctx.shadowOffsetX = 0;
         this.ctx.shadowOffsetY = 0;
       }
-      this.ctx.drawImage(obj.img!, obj.x, obj.y, obj.width, obj.height);
+
+      if (!obj.img) {
+        const img = new Image();
+        img.src = obj.imgSrc;
+        img.onload = () => {
+          obj.img = img;
+          this.ctx?.drawImage(obj.img!, obj.x, obj.y, obj.width, obj.height);
+        }
+      } else
+        this.ctx.drawImage(obj.img!, obj.x, obj.y, obj.width, obj.height);
 
       this.ctx.restore();
     }

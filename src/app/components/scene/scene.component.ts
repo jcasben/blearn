@@ -74,6 +74,8 @@ export class SceneComponent implements AfterViewInit {
 
   private setupMouseEvents() {
     this.canvas.nativeElement.addEventListener('mousedown', (e: MouseEvent) => {
+      if (this.isRunning()) return;
+
       const mouseX = e.offsetX;
       const mouseY = e.offsetY;
 
@@ -88,6 +90,8 @@ export class SceneComponent implements AfterViewInit {
     });
 
     this.canvas.nativeElement.addEventListener('mousemove', (e: MouseEvent) => {
+      if (this.isRunning()) return;
+
       if (this.draggingObject) {
         const mouseX = e.offsetX;
         const mouseY = e.offsetY;
@@ -101,11 +105,15 @@ export class SceneComponent implements AfterViewInit {
     });
 
     this.canvas.nativeElement.addEventListener('mouseup', () => {
+      if (this.isRunning()) return;
+
       if (this.draggingObject !== null) this.sceneObjectsChange.emit();
       this.draggingObject = null;
     });
 
     this.canvas.nativeElement.addEventListener('mouseleave', () => {
+      if (this.isRunning()) return;
+
       this.draggingObject = null;
     });
   }

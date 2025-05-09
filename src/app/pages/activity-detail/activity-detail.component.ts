@@ -61,7 +61,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
   protected readonly BLOCK_LIMITS: Map<string, number>;
 
-  private interpreters: Interpreter[] = [];
+  private runningInterpreters = 0;
   protected isRunning = signal<boolean>(false);
 
   public objectsCode = new Map<string, string>();
@@ -277,8 +277,10 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
   }
 
   protected onRunCode() {
+    this.runningInterpreters = this.objectsCode.size;
+
     this.objectsCode.forEach((v, k) => {
-      console.log(k);
+      console.log('Executing code of object with id ', k);
       this.isRunning.set(true);
       this.runInterpreter(v, k);
     });
@@ -324,10 +326,14 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     const hasMoreCode = interpreter.step();
     if (hasMoreCode) {
       this.sceneComponent.drawImages();
-      setTimeout(() => this.stepExecution(interpreter), 0.5);
+      setTimeout(() => this.stepExecution(interpreter), 0.1);
     } else {
-      this.isRunning.set(false);
-      console.log('Execution finished');
+      this.runningInterpreters--;
+
+      if (this.runningInterpreters === 0) {
+        this.isRunning.set(false);
+        console.log('Execution finished');
+      }
     }
   }
 }

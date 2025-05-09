@@ -93,7 +93,15 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.activity.set(computedActivity());
     this.toolbox.set(JSON.parse(this.activity()!.toolboxInfo.toolboxDefinition));
     this.BLOCK_LIMITS = new Map<string, number>(Object.entries(this.activity()!.toolboxInfo.BLOCK_LIMITS));
-    if (this.activity()!.sceneObjects.length > 0) this.selectSceneObject(this.activity()!.sceneObjects[0].id);
+
+    if (this.activity()!.sceneObjects.length > 0) {
+
+      const restoredObjects = this.activity()!.sceneObjects.map(obj =>
+        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.width, obj.height, obj.workspace)
+      );
+
+      this.activity.set({...this.activity()!, sceneObjects: restoredObjects});
+    }
   }
 
   ngAfterViewInit(): void {

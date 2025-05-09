@@ -108,6 +108,11 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.workspace = this.blocklyEditorComponent.getWorkspace();
     const jsonWorkspace = JSON.stringify(Blockly.serialization.workspaces.save(this.workspace));
     this.activity.set({...this.activity()!, workspace: jsonWorkspace});
+
+    if (this.activity()!.sceneObjects.length > 0) {
+      this.activity()!.sceneObjects.forEach(sceneObject => this.generateCode(sceneObject));
+      this.selectSceneObject(this.activity()!.sceneObjects[0].id);
+    }
   }
 
   ngOnDestroy(): void {

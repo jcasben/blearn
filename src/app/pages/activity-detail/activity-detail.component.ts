@@ -259,6 +259,19 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  private generateCode(sceneObject: SceneObject) {
+    Blockly.serialization.workspaces.load(JSON.parse(sceneObject.workspace), this.workspace);
+    javascriptGenerator.init(this.workspace);
+
+    const startBlock = this.workspace.getTopBlocks(true)
+      .find(block => block.type === 'event_start');
+
+    if (startBlock) {
+      const code = javascriptGenerator.blockToCode(startBlock) as string;
+      this.objectsCode.set(sceneObject.id, code);
+    }
+  }
+
   saveWorkspace(onStorage: boolean) {
     if (this.selectedObject()) {
       javascriptGenerator.init(this.workspace);

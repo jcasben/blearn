@@ -1,11 +1,11 @@
-<div #scene class="flex flex-col h-full w-full">
-  <div class="flex flex-row justify-center">
+<main #scene class="flex flex-col h-full w-full px-4 py-2">
+  <div class="flex flex-row justify-center space-x-2 pb-2">
     <blearn-button
       icon="play"
       studentText="Run"
       teacherText="Run"
-      studentStyle="bg-green-500 text-white"
-      teacherStyle="bg-green-500 text-white"
+      studentStyle="bg-green-500 text-white py-2"
+      teacherStyle="bg-green-500 text-white py-2"
       (clicked)="runCode.emit()"
       [disabled]="isRunning()"
     />
@@ -18,24 +18,26 @@
       (clicked)="isRunning.set(false)"
       [disabled]="!isRunning()"
     />
-    @if (modeService.getMode() === 'teacher') {
-      <blearn-button
-        icon="plus"
-        teacherText="Add"
-        teacherStyle="bg-gray-500 text-white"
-        (clicked)="addObject()"
-      />
-    }
   </div>
 
-  <div class="flex flex-row space-x-4">
-    @for (obj of sceneObjects; track obj.id) {
-      <img [src]="obj.imgSrc"
-           [alt]="obj.id"
-           [ngClass]="['w-24 h-24 rounded', selectedObject() === obj.id ? 'border-4 border-red-500' : '']"
-           (click)="objectSelected.emit(obj.id)">
-    }
-  </div>
+  <canvas #canvas class="w-[40rem] h-[26rem] bg-gray-300 border-transparent rounded-lg"></canvas>
 
-  <canvas #canvas class="w-full h-screen bg-gray-300"></canvas>
-</div>
+  <div>
+    <h3 class="text-2xl py-4"><strong>Scene Objects</strong></h3>
+
+    <div class="grid grid-cols-5 gap-4 justify-items-center">
+      @for (obj of sceneObjects; track obj.id) {
+        <img [src]="obj.imgSrc"
+             [alt]="obj.id"
+             [ngClass]="['w-24 h-24 rounded', selectedObject() === obj.id ? 'border-4 border-red-500' : '']"
+             (click)="objectSelected.emit(obj.id)">
+      }
+
+      @if (modeService.getMode() === 'teacher') {
+        <div class="flex w-24 h-24 text-white border-2 border-gray-500 rounded transition-transform hover:scale-105 shadow-md active:scale-95 duration-150" (click)="addObject()">
+          <span class="fas fa-plus w-8 h-8 bg-gray-500 p-2 rounded-full m-auto"></span>
+        </div>
+      }
+    </div>
+  </div>
+</main>

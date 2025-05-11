@@ -47,11 +47,16 @@ export class SceneComponent implements AfterViewInit {
   }
 
   private initCanvas() {
-    this.ctx = this.canvas.nativeElement.getContext('2d');
+    const canvasEl = this.canvas.nativeElement;
+    const style = getComputedStyle(canvasEl);
 
-    // Initialize the canvas size based on the scene
-    this.canvas.nativeElement.width = this.scene.nativeElement.offsetWidth;
-    this.canvas.nativeElement.height = this.scene.nativeElement.offsetHeight;
+    const width = parseFloat(style.width);
+    const height = parseFloat(style.height);
+
+    canvasEl.width = width;
+    canvasEl.height = height;
+
+    this.ctx = canvasEl.getContext('2d');
 
     const imageLoadPromises = this.sceneObjects.map(obj => {
       return new Promise<void>((resolve) => {

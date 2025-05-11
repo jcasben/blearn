@@ -10,7 +10,7 @@ import {
   ViewChild
 } from '@angular/core';
 import {SceneObject} from '../../models/scene-object';
-import {ButtonComponent} from '../button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import {ModeService} from '../../services/mode.service';
 import {NgClass} from '@angular/common';
 

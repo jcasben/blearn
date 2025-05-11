@@ -17,7 +17,7 @@ import {Activity} from '../../models/activity';
 import {FormsModule} from '@angular/forms';
 import {ModeService} from '../../services/mode.service';
 import {TitleComponent} from '../../components/title/title.component';
-import {ButtonComponent} from '../../components/button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import * as Blockly from 'blockly';
 import {BlocksModalComponent} from '../../components/blocks-modal/blocks-modal.component';
 import {DescriptionModalComponent} from '../../components/description-modal/description-modal.component';

@@ -1,6 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {ModeService} from '../../services/mode.service';
-import {ButtonComponent} from '../../components/button/button.component';
+import {ButtonComponent} from '../button/button.component';
 import {Router, RouterLink} from '@angular/router';
 import {TitleComponent} from '../../components/title/title.component';
 

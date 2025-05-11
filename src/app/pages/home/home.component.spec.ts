@@ -2,7 +2,7 @@ import {ActivityService} from '../../services/activity.service';
 import {ModeService} from '../../services/mode.service';
 import {fireEvent, render, screen, waitFor} from '@testing-library/angular';
 import {HomeComponent} from './home.component';
-import {ButtonComponent} from '../../components/button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import {TitleComponent} from '../../components/title/title.component';
 import {ActivityListComponent} from '../../components/activity-list/activity-list.component';
 import {userEvent} from '@testing-library/user-event';

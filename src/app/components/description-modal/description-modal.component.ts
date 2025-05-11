@@ -1,5 +1,5 @@
 import {Component, EventEmitter, inject, Input, Output, signal} from '@angular/core';
-import {ButtonComponent} from '../button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import {Activity} from '../../models/activity';
 import {FormsModule} from '@angular/forms';
 import {ModeService} from '../../services/mode.service';

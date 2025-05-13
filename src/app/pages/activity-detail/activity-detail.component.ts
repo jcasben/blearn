@@ -127,6 +127,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     if (obj) {
       const img = new Image();
       img.src = obj!.imgSrc;
+      img.crossOrigin = 'anonymous';
       img.onload = () => {
         const duplicateObj = new SceneObject(
           genUniqueId(),
@@ -152,6 +153,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
       this.openImagesModal();
       const img = new Image();
       img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';
+      img.crossOrigin = 'anonymous';
       img.onload = () => {
         const newObject: SceneObject = new SceneObject(
           genUniqueId(),
@@ -338,6 +340,8 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     });
     if (onStorage) {
       this.activity()!.sceneObjects.map(obj => obj.img = undefined);
+      const thumbnail = this.sceneComponent.canvas.nativeElement.toDataURL('image/png');
+      this.activity.set({...this.activity()!, thumbnail});
       this.activityService.updateActivity(this.activityId()!, this.activity()!);
     }
   }

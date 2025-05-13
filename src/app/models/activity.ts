@@ -1,4 +1,5 @@
 import {SceneObject} from './scene-object';
+import {SafeUrl} from '@angular/platform-browser';
 
 export interface Activity {
   id: string,
@@ -10,5 +11,6 @@ export interface Activity {
     BLOCK_LIMITS: { [key: string]: number },
     toolboxDefinition: string,
   },
-  sceneObjects: SceneObject[]
+  sceneObjects: SceneObject[],
+  thumbnail?: string,
 }

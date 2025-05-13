@@ -80,6 +80,7 @@ export class SceneComponent implements AfterViewInit {
       return new Promise<void>((resolve) => {
         const img = new Image();
         img.src = obj.imgSrc;
+        img.crossOrigin = 'anonymous';
         img.onload = () => {
           obj.img = img;
           resolve();
@@ -159,6 +160,9 @@ export class SceneComponent implements AfterViewInit {
 
     this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
+    this.ctx.fillStyle = '#d1d5db';
+    this.ctx.fillRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+
     for (let obj of this.sceneObjects) {
       this.ctx.save();
 
@@ -177,14 +181,7 @@ export class SceneComponent implements AfterViewInit {
         this.ctx.shadowOffsetY = 0;
       }
 
-      if (!obj.img) {
-        const img = new Image();
-        img.src = obj.imgSrc;
-        img.onload = () => {
-          obj.img = img;
-          this.ctx?.drawImage(obj.img!, -obj.width / 2, -obj.height / 2, obj.width, obj.height);
-        }
-      } else this.ctx.drawImage(obj.img!, -obj.width / 2, -obj.height / 2, obj.width, obj.height);
+      if (obj.img) this.ctx.drawImage(obj.img!, -obj.width / 2, -obj.height / 2, obj.width, obj.height);
 
       this.ctx.restore();
     }

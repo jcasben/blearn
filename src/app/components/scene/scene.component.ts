@@ -30,17 +30,30 @@ export class SceneComponent implements AfterViewInit {
 
   @Input() isRunning = signal<boolean>(false);
   @Input() sceneObjects: SceneObject[] = [];
-  @Input() selectedObject = signal<string | undefined>(undefined);
+  @Input() selectedObjectId = signal<string | undefined>(undefined);
 
   @Output() runCode = new EventEmitter<void>();
   @Output() sceneObjectsChange = new EventEmitter<void>();
   @Output() objectAdded = new EventEmitter<void>();
   @Output() objectSelected = new EventEmitter<string>();
+  @Output() objectDeleted = new EventEmitter<string>();
+  @Output() objectDuplicated = new EventEmitter<SceneObject>();
 
   private ctx: CanvasRenderingContext2D | null = null;
   private draggingObject: SceneObject | null = null;
   private offsetX: number = 0;
   private offsetY: number = 0;
+
+  protected contextMenuVisible = false;
+  protected contextMenuX = 0;
+  protected contextMenuY = 0;
+  protected contextMenuObject: SceneObject | null = null;
+
+  protected selectedObject= computed(() => {
+    if (!this.selectedObjectId()) return undefined;
+
+    return this.sceneObjects.find(obj => obj.id === this.selectedObjectId());
+  });
 
   ngAfterViewInit(): void {
     this.initCanvas();
@@ -120,6 +133,19 @@ export class SceneComponent implements AfterViewInit {
 
       this.draggingObject = null;
     });
+  }
+
+  protected onRightClick(event: MouseEvent, obj: SceneObject) {
+    event.preventDefault();
+    this.contextMenuVisible = true;
+    this.contextMenuX = event.clientX;
+    this.contextMenuY = event.clientY;
+    this.contextMenuObject = obj;
+  }
+
+  @HostListener('document:click')
+  hideContextMenu() {
+    this.contextMenuVisible = false;
   }
 
   public drawImages() {

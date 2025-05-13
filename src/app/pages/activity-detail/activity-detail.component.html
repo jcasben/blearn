@@ -59,6 +59,8 @@
       (sceneObjectsChange)="saveWorkspace(false)"
       (objectAdded)="createSceneObject()"
       (objectSelected)="selectSceneObject($event)"
+      (objectDeleted)="deleteSceneObject($event)"
+      (objectDuplicated)="createSceneObject(findSceneObjectById($event))"
     />
   </div>
 

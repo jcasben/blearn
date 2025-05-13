@@ -123,21 +123,47 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     return this.activity()!.sceneObjects.find(obj => obj.id === id);
   }
 
-  protected createSceneObject() {
-    const img = new Image();
-    img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';
-    img.onload = () => {
-      const newObject: SceneObject = new SceneObject(
-        genUniqueId(),
-        img.src,
-        0,
-        0,
-        0,
-        100,
-        100,
-        this.activity()!.workspace,
-        img
-      );
+  protected createSceneObject(obj?: SceneObject) {
+    if (obj) {
+      const img = new Image();
+      img.src = obj!.imgSrc;
+      img.onload = () => {
+        const duplicateObj = new SceneObject(
+          genUniqueId(),
+          img.src,
+          obj!.x,
+          obj!.y,
+          obj!.rotation,
+          obj!.width,
+          obj!.height,
+          obj!.workspace,
+          img
+        );
+
+        Blockly.serialization.workspaces.load(JSON.parse(duplicateObj.workspace), this.workspace);
+        this.workspace.updateToolbox(this.toolbox());
+
+        this.selectedObject.set(duplicateObj.id);
+
+        this.activity()!.sceneObjects.push(duplicateObj);
+        this.sceneComponent.drawImages();
+      }
+    } else {
+      this.openImagesModal();
+      const img = new Image();
+      img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';
+      img.onload = () => {
+        const newObject: SceneObject = new SceneObject(
+          genUniqueId(),
+          img.src,
+          0,
+          0,
+          0,
+          75,
+          75,
+          this.activity()!.workspace,
+          img
+        );
 
       Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
       this.workspace.updateToolbox(this.toolbox());
@@ -157,6 +183,19 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     const obj = this.findSceneObjectById(id);
     Blockly.serialization.workspaces.load(JSON.parse(obj!.workspace), this.workspace);
 
+    this.sceneComponent.drawImages();
+  }
+
+  protected deleteSceneObject(id: string) {
+    const remainingObjects = this.activity()!.sceneObjects.filter(obj => obj.id !== id);
+    this.objectsCode.delete(id);
+    this.activity.set({...this.activity()!, sceneObjects: remainingObjects});
+
+    if (this.selectedObject() === id && remainingObjects.length > 0) {
+      this.selectSceneObject(remainingObjects[0].id);
+    }
+
+    this.sceneComponent.sceneObjects = this.activity()!.sceneObjects;
     this.sceneComponent.drawImages();
   }
 

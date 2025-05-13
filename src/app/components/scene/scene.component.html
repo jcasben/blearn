@@ -51,7 +51,7 @@
         [style.left.px]="contextMenuX"
         [style.top.px]="contextMenuY"
       >
-        <button class="w-full text-left px-2 py-1 hover:bg-gray-100" (click)="objectDuplicated.emit(contextMenuObject!)">Duplicate</button>
+        <button class="w-full text-left px-2 py-1 hover:bg-gray-100" (click)="objectDuplicated.emit(contextMenuObject!.id)">Duplicate</button>
         <button class="w-full text-left px-2 py-1 hover:bg-gray-100 text-red-600"
                 (click)="objectDeleted.emit(contextMenuObject!.id)">Delete
         </button>

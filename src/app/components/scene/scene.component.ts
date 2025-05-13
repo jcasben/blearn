@@ -1,8 +1,9 @@
 import {
   AfterViewInit,
   Component,
+  computed,
   ElementRef,
-  EventEmitter,
+  EventEmitter, HostListener,
   inject,
   Input,
   Output,
@@ -13,12 +14,16 @@ import {SceneObject} from '../../models/scene-object';
 import {ButtonComponent} from '../../layout/button/button.component';
 import {ModeService} from '../../services/mode.service';
 import {NgClass} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {SceneInputComponent} from '../scene-input/scene-input.component';
 
 @Component({
   selector: 'blearn-scene',
   imports: [
     ButtonComponent,
-    NgClass
+    NgClass,
+    FormsModule,
+    SceneInputComponent
   ],
   templateUrl: './scene.component.html',
 })
@@ -37,7 +42,7 @@ export class SceneComponent implements AfterViewInit {
   @Output() objectAdded = new EventEmitter<void>();
   @Output() objectSelected = new EventEmitter<string>();
   @Output() objectDeleted = new EventEmitter<string>();
-  @Output() objectDuplicated = new EventEmitter<SceneObject>();
+  @Output() objectDuplicated = new EventEmitter<string>();
 
   private ctx: CanvasRenderingContext2D | null = null;
   private draggingObject: SceneObject | null = null;
@@ -102,6 +107,7 @@ export class SceneComponent implements AfterViewInit {
           this.draggingObject = sceneObj;
           this.offsetX = mouseX - sceneObj.x;
           this.offsetY = mouseY - sceneObj.y;
+          this.objectSelected.emit(sceneObj.id);
         }
       }
     });

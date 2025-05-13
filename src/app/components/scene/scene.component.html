@@ -22,8 +22,44 @@
 
   <canvas #canvas class="w-[40rem] h-[26rem] bg-gray-300 border-transparent rounded-lg"></canvas>
 
-  <div>
-    <h3 class="text-2xl py-4"><strong>Scene Objects</strong></h3>
+  <aside class="pt-4">
+    @let obj = selectedObject();
+    @if (obj) {
+      <div class="flex flex-row space-x-8 justify-center">
+        <blearn-scene-input
+          [value]="obj.x"
+          label="x"
+          (valueChange)="obj.x = $event; drawImages();"
+        />
+
+        <blearn-scene-input
+          [value]="obj.y"
+          label="y"
+          (valueChange)="obj.y = $event; drawImages();"
+        />
+
+        <blearn-scene-input
+          [value]="obj.width"
+          label="width"
+          (valueChange)="obj.width = $event; drawImages();"
+        />
+
+        <blearn-scene-input
+          [value]="obj.height"
+          label="height"
+          (valueChange)="obj.height = $event; drawImages();"
+        />
+
+        <blearn-scene-input
+          [value]="obj.rotation"
+          label="rotation"
+          (valueChange)="obj.rotation = $event; drawImages();"
+        />
+      </div>
+    }
+
+    <div>
+      <h3 class="text-2xl py-4"><strong>Scene Objects</strong></h3>
 
       <div class="grid grid-cols-5 gap-4 justify-items-center">
         @for (obj of sceneObjects; track obj.id) {

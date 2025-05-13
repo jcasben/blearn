@@ -162,7 +162,15 @@ export class SceneComponent implements AfterViewInit {
     for (let obj of this.sceneObjects) {
       this.ctx.save();
 
-      if (obj.id === this.selectedObject()) {
+      const angleInRadians = obj.rotation * Math.PI / 180;
+
+      const centerX = obj.x + obj.width / 2;
+      const centerY = obj.y + obj.height / 2;
+
+      this.ctx.translate(centerX, centerY);
+      this.ctx.rotate(angleInRadians);
+
+      if (obj.id === this.selectedObjectId()) {
         this.ctx.shadowColor = 'red';
         this.ctx.shadowBlur = 20;
         this.ctx.shadowOffsetX = 0;
@@ -174,10 +182,9 @@ export class SceneComponent implements AfterViewInit {
         img.src = obj.imgSrc;
         img.onload = () => {
           obj.img = img;
-          this.ctx?.drawImage(obj.img!, obj.x, obj.y, obj.width, obj.height);
+          this.ctx?.drawImage(obj.img!, -obj.width / 2, -obj.height / 2, obj.width, obj.height);
         }
-      } else
-        this.ctx.drawImage(obj.img!, obj.x, obj.y, obj.width, obj.height);
+      } else this.ctx.drawImage(obj.img!, -obj.width / 2, -obj.height / 2, obj.width, obj.height);
 
       this.ctx.restore();
     }

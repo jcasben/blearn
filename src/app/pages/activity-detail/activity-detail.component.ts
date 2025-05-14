@@ -26,6 +26,7 @@ import {SceneComponent} from '../../components/scene/scene.component';
 import {javascriptGenerator} from 'blockly/javascript';
 import {SceneObject} from '../../models/scene-object';
 import genUniqueId from '../../utils/genUniqueId';
+import {ImagesModalComponent} from '../../components/images-modal/images-modal.component';
 
 @Component({
   selector: 'blearn-activity-detail',
@@ -109,10 +110,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     const jsonWorkspace = JSON.stringify(Blockly.serialization.workspaces.save(this.workspace));
     this.activity.set({...this.activity()!, workspace: jsonWorkspace});
 
-    if (this.activity()!.sceneObjects.length > 0) {
-      this.activity()!.sceneObjects.forEach(sceneObject => this.generateCode(sceneObject));
-      this.selectSceneObject(this.activity()!.sceneObjects[0].id);
-    }
+    this.activity()!.sceneObjects.forEach(sceneObject => this.generateCode(sceneObject));
   }
 
   ngOnDestroy(): void {
@@ -152,7 +150,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     } else {
       this.openImagesModal();
       const img = new Image();
-      img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';
+      img.src = '/characters/cat.webp';
       img.crossOrigin = 'anonymous';
       img.onload = () => {
         const newObject: SceneObject = new SceneObject(
@@ -167,15 +165,14 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
           img
         );
 
-      Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
-      this.workspace.updateToolbox(this.toolbox());
+        Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
+        this.workspace.updateToolbox(this.toolbox());
 
-      this.selectedObject.set(newObject.id);
+        this.selectedObject.set(newObject.id);
 
-      console.log(this.objectsCode);
-
-      this.activity()!.sceneObjects.push(newObject);
-      this.sceneComponent.drawImages();
+        this.activity()!.sceneObjects.push(newObject);
+        this.sceneComponent.drawImages();
+      }
     }
   }
 
@@ -252,6 +249,12 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
     modalRef.instance.dueDateUpdated.subscribe(dueDate => this.updateDueDate(dueDate));
     modalRef.instance.descriptionUpdated.subscribe(description => this.updateDescription(description));
+    modalRef.instance.close.subscribe(() => modalRef.destroy());
+  }
+
+  protected openImagesModal() {
+    const modalRef = this.modalHost.createComponent(ImagesModalComponent);
+
     modalRef.instance.close.subscribe(() => modalRef.destroy());
   }
 

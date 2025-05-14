@@ -48,6 +48,7 @@ export class SceneComponent implements AfterViewInit {
   private draggingObject: SceneObject | null = null;
   private offsetX: number = 0;
   private offsetY: number = 0;
+  private bgImage: HTMLImageElement | null = null;
 
   protected contextMenuVisible = false;
   protected contextMenuX = 0;
@@ -87,8 +88,19 @@ export class SceneComponent implements AfterViewInit {
         }
       });
     });
+    imageLoadPromises.push(new Promise<void>((resolve) => {
+      const bg = new Image();
+      bg.src = '/backgrounds/forest.jpg';
+      bg.onload = () => {
+        this.bgImage = bg;
+        resolve();
+      }
+    }));
 
-    Promise.all(imageLoadPromises).then(() => this.drawImages());
+    Promise.all(imageLoadPromises).then(() => {
+      if (this.sceneObjects.length > 0) this.objectSelected.emit(this.sceneObjects[0].id);
+      this.drawImages()
+    });
     this.setupMouseEvents();
   }
 
@@ -158,10 +170,7 @@ export class SceneComponent implements AfterViewInit {
   public drawImages() {
     if (!this.ctx) return;
 
-    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
-
-    this.ctx.fillStyle = '#d1d5db';
-    this.ctx.fillRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    this.ctx!.drawImage(this.bgImage!, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
     for (let obj of this.sceneObjects) {
       this.ctx.save();

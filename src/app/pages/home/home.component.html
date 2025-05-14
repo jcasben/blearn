@@ -13,8 +13,8 @@
 
       @if (modeService.getMode() === 'teacher') {
         <blearn-button
-          icon="check"
-          teacherText="Import task"
+          icon="file-import"
+          teacherText="Import activity"
           teacherStyle="text-teacher border-2 border-teacher"
           (clicked)="fileInput.click()"
         />
@@ -24,8 +24,8 @@
 
       <blearn-button
         icon="plus"
-        studentText="Import task"
-        teacherText="Create task"
+        studentText="Import activity"
+        teacherText="Create activity"
         studentStyle="bg-student {{buttonStyle}}"
         teacherStyle="bg-teacher {{buttonStyle}}"
         (click)="addActivity()"

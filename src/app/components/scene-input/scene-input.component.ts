@@ -1,5 +1,6 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
 import {FormsModule} from '@angular/forms';
+import {ModeService} from '../../services/mode.service';
 
 @Component({
   selector: 'blearn-scene-input',
@@ -9,6 +10,8 @@ import {FormsModule} from '@angular/forms';
   templateUrl: './scene-input.component.html',
 })
 export class SceneInputComponent {
+  protected modeService = inject(ModeService);
+
   @Input() label!: string;
   @Input() value!: number;
 

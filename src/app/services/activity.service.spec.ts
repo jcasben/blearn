@@ -43,7 +43,9 @@ describe('ActivityService', () => {
       toolboxInfo: {
         toolboxDefinition: '',
         BLOCK_LIMITS: {}
-      }
+      },
+      sceneObjects: [],
+      thumbnail: ''
     };
     modeService.setMode('student');
 
@@ -65,7 +67,9 @@ describe('ActivityService', () => {
       toolboxInfo: {
         toolboxDefinition: '',
         BLOCK_LIMITS: {}
-      }
+      },
+      sceneObjects: [],
+      thumbnail: ''
     };
     modeService.setMode('teacher');
 
@@ -87,7 +91,9 @@ describe('ActivityService', () => {
       toolboxInfo: {
         toolboxDefinition: '',
         BLOCK_LIMITS: {}
-      }
+      },
+      sceneObjects: [],
+      thumbnail: ''
     }];
     browserStorageService.loadData.mockReturnValue(mockActivities);
 
@@ -120,7 +126,9 @@ describe('ActivityService', () => {
       toolboxInfo: {
         toolboxDefinition: '',
         BLOCK_LIMITS: {}
-      }
+      },
+      sceneObjects: [],
+      thumbnail: ''
     };
     const existingActivities: Activity[] = [{
       id: '1',
@@ -131,7 +139,9 @@ describe('ActivityService', () => {
       toolboxInfo: {
         toolboxDefinition: '',
         BLOCK_LIMITS: {}
-      }
+      },
+      sceneObjects: [],
+      thumbnail: ''
     }];
 
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -150,7 +160,9 @@ describe('ActivityService', () => {
           toolboxInfo: {
             toolboxDefinition: '',
             BLOCK_LIMITS: {}
-          }
+          },
+          sceneObjects: [],
+          thumbnail: ''
         },
         {
           id: '2',
@@ -161,7 +173,9 @@ describe('ActivityService', () => {
           toolboxInfo: {
             toolboxDefinition: '',
             BLOCK_LIMITS: {}
-          }
+          },
+          sceneObjects: [],
+          thumbnail: ''
         }
       ]
     );
@@ -179,7 +193,9 @@ describe('ActivityService', () => {
         toolboxInfo: {
           toolboxDefinition: '',
           BLOCK_LIMITS: {}
-        }
+        },
+        sceneObjects: [],
+        thumbnail: ''
       },
       {
         id: '2',
@@ -190,7 +206,9 @@ describe('ActivityService', () => {
         toolboxInfo: {
           toolboxDefinition: '',
           BLOCK_LIMITS: {}
-        }
+        },
+        sceneObjects: [],
+        thumbnail: ''
       }
     ];
     browserStorageService.loadData.mockReturnValue(existingActivities);
@@ -209,7 +227,9 @@ describe('ActivityService', () => {
         toolboxInfo: {
           toolboxDefinition: '',
           BLOCK_LIMITS: {}
-        }
+        },
+        sceneObjects: [],
+        thumbnail: ''
       }
     );
   });
@@ -224,8 +244,10 @@ describe('ActivityService', () => {
       workspace: '{}',
       toolboxInfo: {
         toolboxDefinition: '',
-        BLOCK_LIMITS: {}
-      }
+        BLOCK_LIMITS: {},
+      },
+      sceneObjects: [],
+      thumbnail: ''
     };
     browserStorageService.loadData.mockReturnValue([mockActivity]);
 
@@ -249,7 +271,9 @@ describe('ActivityService', () => {
         toolboxInfo: {
           toolboxDefinition: '',
           BLOCK_LIMITS: {}
-        }
+        },
+        sceneObjects: [],
+        thumbnail: ''
       }
     ];
     browserStorageService.loadData.mockImplementation(() => mockActivity);

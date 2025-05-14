@@ -37,13 +37,12 @@ describe('HomeComponent', () => {
       ],
     });
 
-    // then
     expect(screen.getByTestId('home-component')).toBeInTheDocument();
   });
 
-  it('should not render evaluate button when in student mode', async () => {
-    // given
-    modeServiceMock.getMode.mockReturnValue('student');
+  it('should render create button when in teacher mode', async () => {
+    modeServiceMock.getMode.mockReturnValue('teacher');
+
     await render(HomeComponent, {
       providers: [
         {provide: ActivityService, useValue: activityServiceMock},
@@ -56,14 +55,13 @@ describe('HomeComponent', () => {
       ],
     });
 
-    // then
-    const evaluateButton = screen.queryByText('Evaluate task');
-    expect(evaluateButton).not.toBeInTheDocument();
+    // Aquí nos aseguramos de buscar por el texto visible
+    expect(screen.getByText('Create activity')).toBeInTheDocument();
   });
 
-  it('should render evaluate button when in teacher mode', async () => {
-    // given
+  it('should call addActivity when "Create activity" button is clicked', async () => {
     modeServiceMock.getMode.mockReturnValue('teacher');
+
     await render(HomeComponent, {
       providers: [
         {provide: ActivityService, useValue: activityServiceMock},
@@ -76,35 +74,14 @@ describe('HomeComponent', () => {
       ],
     });
 
-    // then
-    expect(screen.getByText('Evaluate task')).toBeInTheDocument();
-  });
+    await userEvent.click(screen.getByText('Create activity'));
 
-  it('should call addActivity when "Create task" button is clicked', async () => {
-    // given
-    modeServiceMock.getMode.mockReturnValue('teacher');
-    await render(HomeComponent, {
-      providers: [
-        {provide: ActivityService, useValue: activityServiceMock},
-        {provide: ModeService, useValue: modeServiceMock},
-      ],
-      imports: [
-        ButtonComponent,
-        TitleComponent,
-        ActivityListComponent
-      ],
-    });
-
-    // when
-    await userEvent.click(screen.getByText('Create task'));
-
-    // then
     expect(activityServiceMock.addActivity).toHaveBeenCalled();
   });
 
-  it('should open file input when "Import task" button is clicked', async () => {
-    // given
+  it('should open file input when "Import activity" button is clicked', async () => {
     modeServiceMock.getMode.mockReturnValue('student');
+
     const {fixture} = await render(HomeComponent, {
       providers: [
         {provide: ActivityService, useValue: activityServiceMock},
@@ -116,18 +93,16 @@ describe('HomeComponent', () => {
         ActivityListComponent
       ],
     });
+
     const fileInput = fixture.componentInstance.fileInput;
     jest.spyOn(fileInput.nativeElement, 'click');
 
-    // when
-    await userEvent.click(screen.getByText('Import task'));
+    await userEvent.click(screen.getByText('Import activity'));
 
-    // then
     expect(fileInput.nativeElement.click).toHaveBeenCalled();
   });
 
   it('should handle receiving deleteActivityEmitter from ActivityList', async () => {
-    // given
     const {fixture} = await render(HomeComponent, {
       providers: [
         {provide: ActivityService, useValue: activityServiceMock},
@@ -139,26 +114,28 @@ describe('HomeComponent', () => {
         ActivityListComponent
       ],
     });
+
     const activityListDebugElement = fixture.debugElement.query(By.directive(ActivityListComponent));
     const activityListComponent = activityListDebugElement.componentInstance as ActivityListComponent;
 
-    // when
     activityListComponent.deleteActivityEmitter.emit('1');
     fixture.detectChanges();
 
-    // then
     expect(activityServiceMock.deleteActivity).toHaveBeenCalledWith('1');
   });
 
   it('should handle file selection and parsing', async () => {
-    // given
     modeServiceMock.getMode.mockReturnValue('student');
+
     const file = new File([JSON.stringify({
       id: '1',
       title: 'Activity 1',
       dueDate: '03/03',
-      workspace: '{}'
+      workspace: '{}',
+      toolboxDefinition: '{}',
+
     })], 'test.blearn', {type: 'application/json'});
+
     await render(HomeComponent, {
       providers: [
         {provide: ActivityService, useValue: activityServiceMock},
@@ -171,11 +148,9 @@ describe('HomeComponent', () => {
       ],
     });
 
-    // when
     const input = screen.getByTestId('file-input');
     fireEvent.change(input, { target: { files: [file] } });
 
-    // then
     await waitFor(() => {
       expect(activityServiceMock.addActivity).toHaveBeenCalled();
     });

@@ -5,5 +5,7 @@
     type="number"
     [placeholder]="label"
     [value]="value"
-    (input)="onChange($event)">
+    (input)="onChange($event)"
+    [disabled]="modeService.getMode() === 'student'"
+  >
 </label>

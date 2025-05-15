@@ -65,10 +65,13 @@ export class SceneComponent implements AfterViewInit {
   });
 
   ngAfterViewInit(): void {
-    this.initCanvas();
+    this.initCanvas().then(() => {
+      this.setupMouseEvents();
+      this.drawImages();
+    });
   }
 
-  private initCanvas() {
+  private async initCanvas() {
     const canvasEl = this.canvas.nativeElement;
     const style = getComputedStyle(canvasEl);
 
@@ -80,35 +83,8 @@ export class SceneComponent implements AfterViewInit {
 
     this.ctx = canvasEl.getContext('2d');
 
-    const imageLoadPromises = this.sceneObjects.map(obj => {
-      return new Promise<void>((resolve) => {
-        const img = new Image();
-        img.src = obj.imgSrc;
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          obj.img = img;
-          resolve();
-        }
-      });
-    });
-    imageLoadPromises.push(new Promise<void>((resolve) => {
-      const bg = new Image();
-      bg.src = '/backgrounds/forest.jpg';
-      bg.onload = () => {
-        this.bgImage = bg;
-        resolve();
-      }
-    }));
-
-    Promise.all(imageLoadPromises).then(() => {
-      if (this.sceneObjects.length > 0) this.objectSelected.emit(this.sceneObjects[0].id);
-      this.drawImages()
-    });
-    this.setupMouseEvents();
-  }
-
-  protected addObject() {
-    this.objectAdded.emit();
+    this.sceneObjects.map(async obj => obj.img = await loadImage(obj.imgSrc));
+    if (this.bgSrc) this.bgImage = await loadImage(this.bgSrc);
   }
 
   private setupMouseEvents() {

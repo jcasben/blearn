@@ -13,22 +13,22 @@
 
       @if (modeService.getMode() === 'teacher') {
         <blearn-button
-          icon="file-import"
-          teacherText="Import activity"
+          icon="plus"
+          teacherText="Create activity"
           teacherStyle="text-teacher border-2 border-teacher"
-          (clicked)="fileInput.click()"
+          (clicked)="addActivity()"
         />
       }
 
       <input #fileInput type="file" (change)="onFileSelected($event)" accept=".blearn" data-testid="file-input" hidden>
 
       <blearn-button
-        icon="plus"
+        icon="file-import"
         studentText="Import activity"
-        teacherText="Create activity"
+        teacherText="Import activity"
         studentStyle="bg-student {{buttonStyle}}"
         teacherStyle="bg-teacher {{buttonStyle}}"
-        (click)="addActivity()"
+        (click)="fileInput.click()"
       />
     </div>
   </div>

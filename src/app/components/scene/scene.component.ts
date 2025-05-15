@@ -16,6 +16,7 @@ import {ModeService} from '../../services/mode.service';
 import {NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {SceneInputComponent} from '../scene-input/scene-input.component';
+import loadImage from '../../utils/loadImage';
 
 @Component({
   selector: 'blearn-scene',
@@ -36,6 +37,7 @@ export class SceneComponent implements AfterViewInit {
   @Input() isRunning = signal<boolean>(false);
   @Input() sceneObjects: SceneObject[] = [];
   @Input() selectedObjectId = signal<string | undefined>(undefined);
+  @Input() bgSrc: string | undefined = undefined;
 
   @Output() runCode = new EventEmitter<void>();
   @Output() sceneObjectsChange = new EventEmitter<void>();
@@ -43,12 +45,13 @@ export class SceneComponent implements AfterViewInit {
   @Output() objectSelected = new EventEmitter<string>();
   @Output() objectDeleted = new EventEmitter<string>();
   @Output() objectDuplicated = new EventEmitter<string>();
+  @Output() backgroundChange = new EventEmitter<void>();
 
   private ctx: CanvasRenderingContext2D | null = null;
   private draggingObject: SceneObject | null = null;
   private offsetX: number = 0;
   private offsetY: number = 0;
-  private bgImage: HTMLImageElement | null = null;
+  public bgImage: HTMLImageElement | null = null;
 
   protected contextMenuVisible = false;
   protected contextMenuX = 0;
@@ -170,7 +173,12 @@ export class SceneComponent implements AfterViewInit {
   public drawImages() {
     if (!this.ctx) return;
 
-    this.ctx!.drawImage(this.bgImage!, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    if (this.bgImage) {
+      this.ctx.drawImage(this.bgImage!, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    } else {
+      this.ctx.fillStyle = '#d1d5db';
+      this.ctx.fillRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    }
 
     for (let obj of this.sceneObjects) {
       this.ctx.save();

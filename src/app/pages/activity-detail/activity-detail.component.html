@@ -54,12 +54,14 @@
       [sceneObjects]="this.activity()!.sceneObjects"
       [isRunning]="isRunning"
       [selectedObjectId]="selectedObject"
+      [bgSrc]="this.activity()!.background"
       (runCode)="onRunCode()"
       (sceneObjectsChange)="saveWorkspace(false)"
       (objectAdded)="createSceneObject()"
       (objectSelected)="selectSceneObject($event)"
       (objectDeleted)="deleteSceneObject($event)"
       (objectDuplicated)="createSceneObject(findSceneObjectById($event))"
+      (backgroundChange)="changeSceneBackground()"
     />
   </div>
 

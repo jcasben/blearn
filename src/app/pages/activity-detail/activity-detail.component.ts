@@ -198,6 +198,17 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.sceneComponent.drawImages();
   }
 
+  protected async changeSceneBackground() {
+    const backgroundPath = await this.openImagesModal(true);
+
+    if (backgroundPath === '') return;
+
+    this.activity.set({...this.activity()!, background: backgroundPath});
+    this.sceneComponent.bgImage = await loadImage(backgroundPath);
+    this.sceneComponent.bgSrc = backgroundPath;
+    this.sceneComponent.drawImages();
+  }
+
   protected openBlocksModal() {
     if (this.activity()!.sceneObjects.length === 0) {
       alert('You need to create an object to start adding blocks');

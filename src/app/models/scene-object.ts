@@ -5,8 +5,7 @@ export class SceneObject {
     public x: number,
     public y: number,
     public rotation: number,
-    public width: number,
-    public height: number,
+    public size: number,
     public workspace: string,
     public img?: HTMLImageElement,
   ) {}

@@ -116,7 +116,7 @@ export class SceneComponent implements AfterViewInit {
       const mouseY = e.offsetY;
 
       for (let sceneObj of this.sceneObjects) {
-        if (mouseX >= sceneObj.x && mouseX <= sceneObj.x + sceneObj.width && mouseY >= sceneObj.y && mouseY <= sceneObj.y + sceneObj.height) {
+        if (mouseX >= sceneObj.x && mouseX <= sceneObj.x + sceneObj.size && mouseY >= sceneObj.y && mouseY <= sceneObj.y + sceneObj.size) {
           this.draggingObject = sceneObj;
           this.offsetX = mouseX - sceneObj.x;
           this.offsetY = mouseY - sceneObj.y;
@@ -177,8 +177,8 @@ export class SceneComponent implements AfterViewInit {
 
       const angleInRadians = obj.rotation * Math.PI / 180;
 
-      const centerX = obj.x + obj.width / 2;
-      const centerY = obj.y + obj.height / 2;
+      const centerX = obj.x + obj.size / 2;
+      const centerY = obj.y + obj.size / 2;
 
       this.ctx.translate(centerX, centerY);
       this.ctx.rotate(angleInRadians);
@@ -190,7 +190,7 @@ export class SceneComponent implements AfterViewInit {
         this.ctx.shadowOffsetY = 0;
       }
 
-      if (obj.img) this.ctx.drawImage(obj.img!, -obj.width / 2, -obj.height / 2, obj.width, obj.height);
+      if (obj.img) this.ctx.drawImage(obj.img!, -obj.size / 2, -obj.size / 2, obj.size, obj.size);
 
       this.ctx.restore();
     }

@@ -39,15 +39,9 @@
         />
 
         <blearn-scene-input
-          [value]="obj.width"
-          label="width"
-          (valueChange)="obj.width = $event; drawImages();"
-        />
-
-        <blearn-scene-input
-          [value]="obj.height"
-          label="height"
-          (valueChange)="obj.height = $event; drawImages();"
+          [value]="obj.size"
+          label="size"
+          (valueChange)="obj.size = $event; drawImages();"
         />
 
         <blearn-scene-input

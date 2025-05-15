@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.clickable {
+  @apply transition-transform hover:scale-105 shadow-md active:scale-95 duration-150;
+}

@@ -68,7 +68,7 @@
         @for (obj of sceneObjects; track obj.id) {
           <img [src]="obj.imgSrc"
                [alt]="obj.id"
-               [ngClass]="['w-24 h-24 rounded', selectedObjectId() === obj.id ? 'border-4 border-red-500' : '']"
+               [ngClass]="['w-24 h-24 rounded clickable', selectedObjectId() === obj.id ? 'border-4 border-red-500' : '']"
                (click)="objectSelected.emit(obj.id)"
                (contextmenu)="onRightClick($event, obj)"
           >
@@ -76,7 +76,7 @@
 
         @if (modeService.getMode() === 'teacher') {
           <div
-            class="flex w-24 h-24 text-white border-2 border-gray-500 rounded transition-transform hover:scale-105 shadow-md active:scale-95 duration-150"
+            class="flex w-24 h-24 text-white border-2 border-gray-500 rounded clickable"
             (click)="objectAdded.emit()">
             <span class="fas fa-plus w-8 h-8 bg-gray-500 p-2 rounded-full m-auto"></span>
           </div>

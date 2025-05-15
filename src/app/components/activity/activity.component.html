@@ -3,7 +3,7 @@
     <img [src]="activity.thumbnail" [alt]="activity.id" routerLink="/activity/{{activity.id}}" class="rounded-lg shadow-md w-90 h-52 transition-transform hover:scale-105 hover:cursor-pointer active:scale-95 duration-150">
   } @else {
     <div
-      class="bg-gray-400 rounded-lg shadow-md w-90 h-52 transition-transform hover:scale-105 hover:cursor-pointer active:scale-95 duration-150"
+      class="bg-gray-400 rounded-lg shadow-md w-90 h-52 clickable"
       routerLink="/activity/{{activity.id}}"></div>
   }
 

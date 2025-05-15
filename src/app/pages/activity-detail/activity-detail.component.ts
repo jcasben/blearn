@@ -150,7 +150,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         0,
         0,
         0,
-        75,
+        100,
         this.activity()!.workspace,
         img
       );

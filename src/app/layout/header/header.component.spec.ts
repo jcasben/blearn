@@ -1,7 +1,7 @@
 import {ModeService} from '../../services/mode.service';
 import {render, screen} from '@testing-library/angular';
 import {HeaderComponent} from './header.component';
-import {ButtonComponent} from '../../components/button/button.component';
+import {ButtonComponent} from '../button/button.component';
 import {TitleComponent} from '../../components/title/title.component';
 import {userEvent} from '@testing-library/user-event';
 

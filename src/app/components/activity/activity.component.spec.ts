@@ -23,7 +23,9 @@ describe('ActivityComponent', () => {
     toolboxInfo: {
       toolboxDefinition: '',
       BLOCK_LIMITS: {}
-    }
+    },
+    sceneObjects: [],
+    thumbnail: ''
   };
 
   it('should toggle the menu when clicking the button', async () => {

@@ -10,5 +10,7 @@ export interface Activity {
     BLOCK_LIMITS: { [key: string]: number },
     toolboxDefinition: string,
   },
-  sceneObjects: SceneObject[]
+  sceneObjects: SceneObject[],
+  thumbnail?: string,
+  background?: string
 }

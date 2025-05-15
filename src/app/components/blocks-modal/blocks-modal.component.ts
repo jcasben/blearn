@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, Output, signal} from '@angular/core';
-import {ButtonComponent} from '../button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import * as Blockly from 'blockly';
 
 @Component({

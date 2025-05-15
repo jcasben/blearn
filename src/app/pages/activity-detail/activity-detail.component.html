@@ -1,6 +1,6 @@
 <div class="flex flex-col">
-  <div [ngClass]="[
-    'flex justify-between items-center p-8 border-b-4',
+  <header [ngClass]="[
+    'flex justify-between items-center py-2 px-8 border-b-4',
     modeService.getMode() === 'student' ? 'border-student' : 'border-teacher'
   ]">
     @if (modeService.getMode() === 'student') {
@@ -10,7 +10,7 @@
       />
     } @else {
       <input
-        class="p-2 border-4 rounded-lg bg-gray-50 text-4xl"
+        class="p-2 border-4 rounded-lg bg-gray-50 text-3xl"
         type="text"
         [ngModel]="activity()?.title"
         (ngModelChange)="updateTitle($event)"
@@ -38,8 +38,8 @@
         (click)="saveWorkspace(true); activityService.downloadActivity(activity()!)"
       />
     </div>
-  </div>
-  <div class="flex h-screen w-full">
+  </header>
+  <div class="flex h-svh w-full">
     <blearn-blockly-editor
       class="relative flex-1"
       [toolbox]="toolbox"
@@ -51,14 +51,17 @@
     />
     <div [ngClass]="['w-1 cursor-ew-resize', modeService.getMode() === 'student' ? 'bg-student' : 'bg-teacher']"></div>
     <blearn-scene
-      class="flex-1"
       [sceneObjects]="this.activity()!.sceneObjects"
       [isRunning]="isRunning"
-      [selectedObject]="selectedObject"
+      [selectedObjectId]="selectedObject"
+      [bgSrc]="this.activity()!.background"
       (runCode)="onRunCode()"
       (sceneObjectsChange)="saveWorkspace(false)"
       (objectAdded)="createSceneObject()"
       (objectSelected)="selectSceneObject($event)"
+      (objectDeleted)="deleteSceneObject($event)"
+      (objectDuplicated)="createSceneObject(findSceneObjectById($event))"
+      (backgroundChange)="changeSceneBackground()"
     />
   </div>
 

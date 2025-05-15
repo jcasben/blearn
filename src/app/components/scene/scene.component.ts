@@ -1,8 +1,9 @@
 import {
   AfterViewInit,
   Component,
+  computed,
   ElementRef,
-  EventEmitter,
+  EventEmitter, HostListener,
   inject,
   Input,
   Output,
@@ -10,15 +11,20 @@ import {
   ViewChild
 } from '@angular/core';
 import {SceneObject} from '../../models/scene-object';
-import {ButtonComponent} from '../button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import {ModeService} from '../../services/mode.service';
 import {NgClass} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {SceneInputComponent} from '../scene-input/scene-input.component';
+import loadImage from '../../utils/loadImage';
 
 @Component({
   selector: 'blearn-scene',
   imports: [
     ButtonComponent,
-    NgClass
+    NgClass,
+    FormsModule,
+    SceneInputComponent
   ],
   templateUrl: './scene.component.html',
 })
@@ -30,46 +36,55 @@ export class SceneComponent implements AfterViewInit {
 
   @Input() isRunning = signal<boolean>(false);
   @Input() sceneObjects: SceneObject[] = [];
-  @Input() selectedObject = signal<string | undefined>(undefined);
+  @Input() selectedObjectId = signal<string | undefined>(undefined);
+  @Input() bgSrc: string | undefined = undefined;
 
   @Output() runCode = new EventEmitter<void>();
   @Output() sceneObjectsChange = new EventEmitter<void>();
   @Output() objectAdded = new EventEmitter<void>();
   @Output() objectSelected = new EventEmitter<string>();
+  @Output() objectDeleted = new EventEmitter<string>();
+  @Output() objectDuplicated = new EventEmitter<string>();
+  @Output() backgroundChange = new EventEmitter<void>();
 
   private ctx: CanvasRenderingContext2D | null = null;
   private draggingObject: SceneObject | null = null;
   private offsetX: number = 0;
   private offsetY: number = 0;
+  public bgImage: HTMLImageElement | null = null;
+
+  protected contextMenuVisible = false;
+  protected contextMenuX = 0;
+  protected contextMenuY = 0;
+  protected contextMenuObject: SceneObject | null = null;
+
+  protected selectedObject= computed(() => {
+    if (!this.selectedObjectId()) return undefined;
+
+    return this.sceneObjects.find(obj => obj.id === this.selectedObjectId());
+  });
 
   ngAfterViewInit(): void {
-    this.initCanvas();
-  }
-
-  private initCanvas() {
-    this.ctx = this.canvas.nativeElement.getContext('2d');
-
-    // Initialize the canvas size based on the scene
-    this.canvas.nativeElement.width = this.scene.nativeElement.offsetWidth;
-    this.canvas.nativeElement.height = this.scene.nativeElement.offsetHeight;
-
-    const imageLoadPromises = this.sceneObjects.map(obj => {
-      return new Promise<void>((resolve) => {
-        const img = new Image();
-        img.src = obj.imgSrc;
-        img.onload = () => {
-          obj.img = img;
-          resolve();
-        }
-      });
+    this.initCanvas().then(() => {
+      this.setupMouseEvents();
+      this.drawImages();
     });
-
-    Promise.all(imageLoadPromises).then(() => this.drawImages());
-    this.setupMouseEvents();
   }
 
-  protected addObject() {
-    this.objectAdded.emit();
+  private async initCanvas() {
+    const canvasEl = this.canvas.nativeElement;
+    const style = getComputedStyle(canvasEl);
+
+    const width = parseFloat(style.width);
+    const height = parseFloat(style.height);
+
+    canvasEl.width = width;
+    canvasEl.height = height;
+
+    this.ctx = canvasEl.getContext('2d');
+
+    this.sceneObjects.map(async obj => obj.img = await loadImage(obj.imgSrc));
+    if (this.bgSrc) this.bgImage = await loadImage(this.bgSrc);
   }
 
   private setupMouseEvents() {
@@ -80,10 +95,11 @@ export class SceneComponent implements AfterViewInit {
       const mouseY = e.offsetY;
 
       for (let sceneObj of this.sceneObjects) {
-        if (mouseX >= sceneObj.x && mouseX <= sceneObj.x + sceneObj.width && mouseY >= sceneObj.y && mouseY <= sceneObj.y + sceneObj.height) {
+        if (mouseX >= sceneObj.x && mouseX <= sceneObj.x + sceneObj.size && mouseY >= sceneObj.y && mouseY <= sceneObj.y + sceneObj.size) {
           this.draggingObject = sceneObj;
           this.offsetX = mouseX - sceneObj.x;
           this.offsetY = mouseY - sceneObj.y;
+          this.objectSelected.emit(sceneObj.id);
         }
       }
     });
@@ -117,30 +133,48 @@ export class SceneComponent implements AfterViewInit {
     });
   }
 
+  protected onRightClick(event: MouseEvent, obj: SceneObject) {
+    event.preventDefault();
+    this.contextMenuVisible = true;
+    this.contextMenuX = event.clientX;
+    this.contextMenuY = event.clientY;
+    this.contextMenuObject = obj;
+  }
+
+  @HostListener('document:click')
+  hideContextMenu() {
+    this.contextMenuVisible = false;
+  }
+
   public drawImages() {
     if (!this.ctx) return;
 
-    this.ctx.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    if (this.bgImage) {
+      this.ctx.drawImage(this.bgImage!, 0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    } else {
+      this.ctx.fillStyle = '#d1d5db';
+      this.ctx.fillRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
+    }
 
     for (let obj of this.sceneObjects) {
       this.ctx.save();
 
-      if (obj.id === this.selectedObject()) {
+      const angleInRadians = obj.rotation * Math.PI / 180;
+
+      const centerX = obj.x + obj.size / 2;
+      const centerY = obj.y + obj.size / 2;
+
+      this.ctx.translate(centerX, centerY);
+      this.ctx.rotate(angleInRadians);
+
+      if (obj.id === this.selectedObjectId()) {
         this.ctx.shadowColor = 'red';
         this.ctx.shadowBlur = 20;
         this.ctx.shadowOffsetX = 0;
         this.ctx.shadowOffsetY = 0;
       }
 
-      if (!obj.img) {
-        const img = new Image();
-        img.src = obj.imgSrc;
-        img.onload = () => {
-          obj.img = img;
-          this.ctx?.drawImage(obj.img!, obj.x, obj.y, obj.width, obj.height);
-        }
-      } else
-        this.ctx.drawImage(obj.img!, obj.x, obj.y, obj.width, obj.height);
+      if (obj.img) this.ctx.drawImage(obj.img!, -obj.size / 2, -obj.size / 2, obj.size, obj.size);
 
       this.ctx.restore();
     }

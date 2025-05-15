@@ -1,11 +1,11 @@
-<div #scene class="flex flex-col h-full w-full">
-  <div class="flex flex-row justify-center">
+<main #scene class="flex flex-col h-full w-full px-4 py-2">
+  <div class="flex flex-row justify-center space-x-2 pb-2">
     <blearn-button
       icon="play"
       studentText="Run"
       teacherText="Run"
-      studentStyle="bg-green-500 text-white"
-      teacherStyle="bg-green-500 text-white"
+      studentStyle="bg-green-500 text-white py-2"
+      teacherStyle="bg-green-500 text-white py-2"
       (clicked)="runCode.emit()"
       [disabled]="isRunning()"
     />
@@ -20,22 +20,81 @@
     />
     @if (modeService.getMode() === 'teacher') {
       <blearn-button
-        icon="plus"
-        teacherText="Add"
+        icon="image"
+        teacherText="Change background"
         teacherStyle="bg-gray-500 text-white"
-        (clicked)="addObject()"
+        (clicked)="backgroundChange.emit()"
+        [disabled]="isRunning()"
       />
     }
   </div>
 
-  <div class="flex flex-row space-x-4">
-    @for (obj of sceneObjects; track obj.id) {
-      <img [src]="obj.imgSrc"
-           [alt]="obj.id"
-           [ngClass]="['w-24 h-24 rounded', selectedObject() === obj.id ? 'border-4 border-red-500' : '']"
-           (click)="objectSelected.emit(obj.id)">
-    }
-  </div>
+  <canvas #canvas class="w-[40rem] h-[26rem] border-transparent rounded-lg"></canvas>
 
-  <canvas #canvas class="w-full h-screen bg-gray-300"></canvas>
-</div>
+  <aside class="pt-4">
+    @let obj = selectedObject();
+    @if (obj) {
+      <div class="flex flex-row space-x-8 justify-center">
+        <blearn-scene-input
+          [value]="obj.x"
+          label="x"
+          (valueChange)="obj.x = $event; drawImages();"
+        />
+
+        <blearn-scene-input
+          [value]="obj.y"
+          label="y"
+          (valueChange)="obj.y = $event; drawImages();"
+        />
+
+        <blearn-scene-input
+          [value]="obj.size"
+          label="size"
+          (valueChange)="obj.size = $event; drawImages();"
+        />
+
+        <blearn-scene-input
+          [value]="obj.rotation"
+          label="rotation"
+          (valueChange)="obj.rotation = $event; drawImages();"
+        />
+      </div>
+    }
+
+    <div>
+      <h3 class="text-2xl py-4"><strong>Scene Objects</strong></h3>
+
+      <div class="grid grid-cols-5 gap-4 justify-items-center">
+        @for (obj of sceneObjects; track obj.id) {
+          <img [src]="obj.imgSrc"
+               [alt]="obj.id"
+               [ngClass]="['w-24 h-24 rounded clickable', selectedObjectId() === obj.id ? 'border-4 border-red-500' : '']"
+               (click)="objectSelected.emit(obj.id)"
+               (contextmenu)="onRightClick($event, obj)"
+          >
+        }
+
+        @if (modeService.getMode() === 'teacher') {
+          <div
+            class="flex w-24 h-24 text-white border-2 border-gray-500 rounded clickable"
+            (click)="objectAdded.emit()">
+            <span class="fas fa-plus w-8 h-8 bg-gray-500 p-2 rounded-full m-auto"></span>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (contextMenuVisible && modeService.getMode() === 'teacher') {
+      <div
+        class="absolute z-50 bg-white border border-gray-300 shadow-lg rounded p-2 w-40"
+        [style.left.px]="contextMenuX"
+        [style.top.px]="contextMenuY"
+      >
+        <button class="w-full text-left px-2 py-1 hover:bg-gray-100" (click)="objectDuplicated.emit(contextMenuObject!.id)">Duplicate</button>
+        <button class="w-full text-left px-2 py-1 hover:bg-gray-100 text-red-600"
+                (click)="objectDeleted.emit(contextMenuObject!.id)">Delete
+        </button>
+      </div>
+    }
+  </aside>
+</main>

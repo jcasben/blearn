@@ -17,7 +17,7 @@ import {Activity} from '../../models/activity';
 import {FormsModule} from '@angular/forms';
 import {ModeService} from '../../services/mode.service';
 import {TitleComponent} from '../../components/title/title.component';
-import {ButtonComponent} from '../../components/button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import * as Blockly from 'blockly';
 import {BlocksModalComponent} from '../../components/blocks-modal/blocks-modal.component';
 import {DescriptionModalComponent} from '../../components/description-modal/description-modal.component';
@@ -26,6 +26,8 @@ import {SceneComponent} from '../../components/scene/scene.component';
 import {javascriptGenerator} from 'blockly/javascript';
 import {SceneObject} from '../../models/scene-object';
 import genUniqueId from '../../utils/genUniqueId';
+import {ImagesModalComponent} from '../../components/images-modal/images-modal.component';
+import loadImage from '../../utils/loadImage';
 
 @Component({
   selector: 'blearn-activity-detail',
@@ -97,7 +99,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     if (this.activity()!.sceneObjects.length > 0) {
 
       const restoredObjects = this.activity()!.sceneObjects.map(obj =>
-        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.width, obj.height, obj.workspace)
+        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.size, obj.workspace)
       );
 
       this.activity.set({...this.activity()!, sceneObjects: restoredObjects});
@@ -109,10 +111,8 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     const jsonWorkspace = JSON.stringify(Blockly.serialization.workspaces.save(this.workspace));
     this.activity.set({...this.activity()!, workspace: jsonWorkspace});
 
-    if (this.activity()!.sceneObjects.length > 0) {
-      this.activity()!.sceneObjects.forEach(sceneObject => this.generateCode(sceneObject));
-      this.selectSceneObject(this.activity()!.sceneObjects[0].id);
-    }
+    this.activity()!.sceneObjects.forEach(sceneObject => this.generateCode(sceneObject));
+    if (this.activity()!.sceneObjects.length > 0) this.selectSceneObject(this.activity()!.sceneObjects[0].id);
   }
 
   ngOnDestroy(): void {
@@ -123,32 +123,46 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     return this.activity()!.sceneObjects.find(obj => obj.id === id);
   }
 
-  protected createSceneObject() {
-    const img = new Image();
-    img.src = 'https://avatars.githubusercontent.com/u/105555875?v=4';
-    img.onload = () => {
-      const newObject: SceneObject = new SceneObject(
+  protected async createSceneObject(obj?: SceneObject) {
+    let newObject: SceneObject;
+
+    if (obj) {
+      const img = await loadImage(obj.imgSrc)
+      newObject = new SceneObject(
+        genUniqueId(),
+        img.src,
+        obj.x,
+        obj.y,
+        obj.rotation,
+        obj.size,
+        obj.workspace,
+        img
+      );
+    } else {
+      const characterPath = await this.openImagesModal(false);
+
+      if (characterPath === '') return;
+
+      const img = await loadImage(characterPath);
+      newObject = new SceneObject(
         genUniqueId(),
         img.src,
         0,
         0,
         0,
         100,
-        100,
         this.activity()!.workspace,
         img
       );
-
-      Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
-      this.workspace.updateToolbox(this.toolbox());
-
-      this.selectedObject.set(newObject.id);
-
-      console.log(this.objectsCode);
-
-      this.activity()!.sceneObjects.push(newObject);
-      this.sceneComponent.drawImages();
     }
+
+    Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
+    this.workspace.updateToolbox(this.toolbox());
+
+    this.selectedObject.set(newObject.id);
+
+    this.activity()!.sceneObjects.push(newObject);
+    this.sceneComponent.drawImages();
   }
 
   protected selectSceneObject(id: string) {
@@ -157,6 +171,30 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     const obj = this.findSceneObjectById(id);
     Blockly.serialization.workspaces.load(JSON.parse(obj!.workspace), this.workspace);
 
+    this.sceneComponent.drawImages();
+  }
+
+  protected deleteSceneObject(id: string) {
+    const remainingObjects = this.activity()!.sceneObjects.filter(obj => obj.id !== id);
+    this.objectsCode.delete(id);
+    this.activity.set({...this.activity()!, sceneObjects: remainingObjects});
+
+    if (this.selectedObject() === id && remainingObjects.length > 0) {
+      this.selectSceneObject(remainingObjects[0].id);
+    }
+
+    this.sceneComponent.sceneObjects = this.activity()!.sceneObjects;
+    this.sceneComponent.drawImages();
+  }
+
+  protected async changeSceneBackground() {
+    const backgroundPath = await this.openImagesModal(true);
+
+    if (backgroundPath === '') return;
+
+    this.activity.set({...this.activity()!, background: backgroundPath});
+    this.sceneComponent.bgImage = await loadImage(backgroundPath);
+    this.sceneComponent.bgSrc = backgroundPath;
     this.sceneComponent.drawImages();
   }
 
@@ -212,6 +250,20 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     modalRef.instance.dueDateUpdated.subscribe(dueDate => this.updateDueDate(dueDate));
     modalRef.instance.descriptionUpdated.subscribe(description => this.updateDescription(description));
     modalRef.instance.close.subscribe(() => modalRef.destroy());
+  }
+
+  protected openImagesModal(backgrounds: boolean): Promise<string> {
+    return new Promise((resolve) => {
+      const modalRef = this.modalHost.createComponent(ImagesModalComponent);
+      modalRef.instance.backgrounds = backgrounds;
+
+      modalRef.instance.imageSelected.subscribe((imgPath) => {
+        resolve(imgPath);
+        modalRef.destroy();
+      })
+
+      modalRef.instance.close.subscribe(() => modalRef.destroy());
+    });
   }
 
   protected updateToolboxLimits() {
@@ -299,6 +351,8 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     });
     if (onStorage) {
       this.activity()!.sceneObjects.map(obj => obj.img = undefined);
+      const thumbnail = this.sceneComponent.canvas.nativeElement.toDataURL('image/png');
+      this.activity.set({...this.activity()!, thumbnail});
       this.activityService.updateActivity(this.activityId()!, this.activity()!);
     }
   }

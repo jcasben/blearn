@@ -5,14 +5,15 @@ export class SceneObject {
     public x: number,
     public y: number,
     public rotation: number,
-    public width: number,
-    public height: number,
+    public size: number,
     public workspace: string,
     public img?: HTMLImageElement,
   ) {}
 
   moveForward(steps: number) {
-    this.x += steps;
+    const radians = (this.rotation * Math.PI) / 180;
+    this.x += Math.cos(radians) * steps;
+    this.y += Math.sin(radians) * steps;
   }
 
   moveTo(x: number, y: number) {
@@ -25,10 +26,10 @@ export class SceneObject {
   }
 
   turnLeft(angle: number) {
-
+    this.rotation = (this.rotation - angle) % 360;
   }
 
   turnRight(angle: number) {
-
+    this.rotation = (this.rotation + angle) % 360;
   }
 }

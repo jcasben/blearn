@@ -1,0 +1,11 @@
+<label class="flex flex-row items-center space-x-2">
+  <span>{{ label }}</span>
+  <input
+    class="border-2 p-2 w-14 text-center rounded-full"
+    type="number"
+    [placeholder]="label"
+    [value]="value"
+    (input)="onChange($event)"
+    [disabled]="modeService.getMode() === 'student'"
+  >
+</label>

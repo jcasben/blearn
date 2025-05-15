@@ -1,6 +1,6 @@
 import {Component, effect, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {ModeService} from "../../services/mode.service";
-import {ButtonComponent} from '../../components/button/button.component';
+import {ButtonComponent} from '../../layout/button/button.component';
 import {TitleComponent} from '../../components/title/title.component';
 import {ActivityService} from '../../services/activity.service';
 import genUniqueId from '../../utils/genUniqueId';
@@ -95,6 +95,8 @@ export class HomeComponent {
       workspace: jsonData.workspace,
       toolboxInfo: jsonData.toolboxInfo,
       sceneObjects: jsonData.sceneObjects,
+      thumbnail: jsonData.thumbnail,
+      background: jsonData.background
     }
   }
 }

@@ -99,7 +99,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     if (this.activity()!.sceneObjects.length > 0) {
 
       const restoredObjects = this.activity()!.sceneObjects.map(obj =>
-        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.width, obj.height, obj.workspace)
+        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.size, obj.workspace)
       );
 
       this.activity.set({...this.activity()!, sceneObjects: restoredObjects});
@@ -112,6 +112,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.activity.set({...this.activity()!, workspace: jsonWorkspace});
 
     this.activity()!.sceneObjects.forEach(sceneObject => this.generateCode(sceneObject));
+    if (this.activity()!.sceneObjects.length > 0) this.selectSceneObject(this.activity()!.sceneObjects[0].id);
   }
 
   ngOnDestroy(): void {
@@ -122,59 +123,46 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     return this.activity()!.sceneObjects.find(obj => obj.id === id);
   }
 
-  protected createSceneObject(obj?: SceneObject) {
+  protected async createSceneObject(obj?: SceneObject) {
+    let newObject: SceneObject;
+
     if (obj) {
-      const img = new Image();
-      img.src = obj!.imgSrc;
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const duplicateObj = new SceneObject(
-          genUniqueId(),
-          img.src,
-          obj!.x,
-          obj!.y,
-          obj!.rotation,
-          obj!.width,
-          obj!.height,
-          obj!.workspace,
-          img
-        );
-
-        Blockly.serialization.workspaces.load(JSON.parse(duplicateObj.workspace), this.workspace);
-        this.workspace.updateToolbox(this.toolbox());
-
-        this.selectedObject.set(duplicateObj.id);
-
-        this.activity()!.sceneObjects.push(duplicateObj);
-        this.sceneComponent.drawImages();
-      }
+      const img = await loadImage(obj.imgSrc)
+      newObject = new SceneObject(
+        genUniqueId(),
+        img.src,
+        obj.x,
+        obj.y,
+        obj.rotation,
+        obj.size,
+        obj.workspace,
+        img
+      );
     } else {
-      this.openImagesModal();
-      const img = new Image();
-      img.src = '/characters/cat.webp';
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        const newObject: SceneObject = new SceneObject(
-          genUniqueId(),
-          img.src,
-          0,
-          0,
-          0,
-          75,
-          75,
-          this.activity()!.workspace,
-          img
-        );
+      const characterPath = await this.openImagesModal(false);
 
-        Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
-        this.workspace.updateToolbox(this.toolbox());
+      if (characterPath === '') return;
 
-        this.selectedObject.set(newObject.id);
-
-        this.activity()!.sceneObjects.push(newObject);
-        this.sceneComponent.drawImages();
-      }
+      const img = await loadImage(characterPath);
+      newObject = new SceneObject(
+        genUniqueId(),
+        img.src,
+        0,
+        0,
+        0,
+        75,
+        this.activity()!.workspace,
+        img
+      );
     }
+
+    Blockly.serialization.workspaces.load(JSON.parse(newObject.workspace), this.workspace);
+    this.workspace.updateToolbox(this.toolbox());
+
+    this.selectedObject.set(newObject.id);
+
+    this.activity()!.sceneObjects.push(newObject);
+    this.sceneComponent.drawImages();
   }
 
   protected selectSceneObject(id: string) {

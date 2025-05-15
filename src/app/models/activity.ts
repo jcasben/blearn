@@ -1,5 +1,4 @@
 import {SceneObject} from './scene-object';
-import {SafeUrl} from '@angular/platform-browser';
 
 export interface Activity {
   id: string,
@@ -13,4 +12,5 @@ export interface Activity {
   },
   sceneObjects: SceneObject[],
   thumbnail?: string,
+  background?: string
 }

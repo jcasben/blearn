@@ -27,6 +27,7 @@ import {javascriptGenerator} from 'blockly/javascript';
 import {SceneObject} from '../../models/scene-object';
 import genUniqueId from '../../utils/genUniqueId';
 import {ImagesModalComponent} from '../../components/images-modal/images-modal.component';
+import loadImage from '../../utils/loadImage';
 
 @Component({
   selector: 'blearn-activity-detail',

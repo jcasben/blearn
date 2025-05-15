@@ -96,6 +96,7 @@ export class HomeComponent {
       toolboxInfo: jsonData.toolboxInfo,
       sceneObjects: jsonData.sceneObjects,
       thumbnail: jsonData.thumbnail,
+      background: jsonData.background
     }
   }
 }

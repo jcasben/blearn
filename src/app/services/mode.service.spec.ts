@@ -1,11 +1,16 @@
 import {beforeEach, describe, expect, it} from '@jest/globals';
 import {ModeService} from './mode.service';
+import {BrowserStorageService} from './browser-storage.service';
+import {TestBed} from '@angular/core/testing';
 
 describe('ModeService', () => {
   let service: ModeService;
+  let browserStorageMock: jest.Mocked<BrowserStorageService>;
 
   beforeEach(() => {
-    service = new ModeService();
+    TestBed.configureTestingModule({providers: [BrowserStorageService]})
+    browserStorageMock = TestBed.inject(BrowserStorageService) as jest.Mocked<BrowserStorageService>
+    service = new ModeService(browserStorageMock);
   });
 
   it('should be created', () => {

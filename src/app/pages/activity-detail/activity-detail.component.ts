@@ -252,10 +252,18 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     modalRef.instance.close.subscribe(() => modalRef.destroy());
   }
 
-  protected openImagesModal() {
-    const modalRef = this.modalHost.createComponent(ImagesModalComponent);
+  protected openImagesModal(backgrounds: boolean): Promise<string> {
+    return new Promise((resolve) => {
+      const modalRef = this.modalHost.createComponent(ImagesModalComponent);
+      modalRef.instance.backgrounds = backgrounds;
 
-    modalRef.instance.close.subscribe(() => modalRef.destroy());
+      modalRef.instance.imageSelected.subscribe((imgPath) => {
+        resolve(imgPath);
+        modalRef.destroy();
+      })
+
+      modalRef.instance.close.subscribe(() => modalRef.destroy());
+    });
   }
 
   protected updateToolboxLimits() {

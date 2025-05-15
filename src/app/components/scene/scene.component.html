@@ -18,6 +18,15 @@
       (clicked)="isRunning.set(false)"
       [disabled]="!isRunning()"
     />
+    @if (modeService.getMode() === 'teacher') {
+      <blearn-button
+        icon="image"
+        teacherText="Change background"
+        teacherStyle="bg-gray-500 text-white"
+        (clicked)="backgroundChange.emit()"
+        [disabled]="isRunning()"
+      />
+    }
   </div>
 
   <canvas #canvas class="w-[40rem] h-[26rem] border-transparent rounded-lg"></canvas>
@@ -68,7 +77,7 @@
         @if (modeService.getMode() === 'teacher') {
           <div
             class="flex w-24 h-24 text-white border-2 border-gray-500 rounded transition-transform hover:scale-105 shadow-md active:scale-95 duration-150"
-            (click)="addObject()">
+            (click)="objectAdded.emit()">
             <span class="fas fa-plus w-8 h-8 bg-gray-500 p-2 rounded-full m-auto"></span>
           </div>
         }

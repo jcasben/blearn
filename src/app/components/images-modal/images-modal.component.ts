@@ -1,15 +1,32 @@
-import {Component, EventEmitter, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {ButtonComponent} from "../../layout/button/button.component";
-import {DatePipe} from "@angular/common";
-import {ReactiveFormsModule} from "@angular/forms";
+import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'blearn-images-modal',
   imports: [
-    ButtonComponent
+    ButtonComponent,
+    NgClass
   ],
   templateUrl: './images-modal.component.html',
 })
 export class ImagesModalComponent {
+  @Input() backgrounds = false;
+  @Output() imageSelected = new EventEmitter<string>();
   @Output() close = new EventEmitter<void>();
+
+  protected backgroundPaths = [
+    '/backgrounds/desert.webp',
+    '/backgrounds/forest.webp',
+    '/backgrounds/winter.webp',
+    '/backgrounds/underwater.webp',
+  ];
+
+  protected charactersPaths = [
+    '/characters/cat.webp',
+    '/characters/dog.png',
+    '/characters/bird.png',
+    '/characters/turtle.png',
+    '/characters/fish.png',
+  ];
 }

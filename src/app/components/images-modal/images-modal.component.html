@@ -1,12 +1,20 @@
 <div class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-  <div class="bg-white rounded-lg shadow-xl w-[32rem] max-h-[90vh]">
+  <div class="bg-white rounded-lg shadow-xl w-[50rem] max-h-[100vh]">
     <div class="flex flex-row p-6 justify-between shadow-md">
-      <h2 class="text-4xl">Select an image for the new object</h2>
+      <h2 class="text-4xl">{{ backgrounds ? 'Select the new background' : 'Select the new character' }}</h2>
       <blearn-button
         icon="xmark"
         teacherStyle="bg-red-500 text-white"
         (click)="close.emit()"
       />
+    </div>
+
+    <div class="grid grid-cols-3 justify-items-center">
+      @let paths = backgrounds ? backgroundPaths : charactersPaths;
+      @for (path of paths; track path) {
+        <img [src]="path" [ngClass]="[backgrounds ? 'w-[14rem] h-40' : 'w-40 h-40', 'm-4 rounded-md clickable']"
+             [alt]="path" (click)="imageSelected.emit(path)">
+      }
     </div>
   </div>
 </div>

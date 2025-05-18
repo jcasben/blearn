@@ -98,7 +98,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
     if (this.activity()!.sceneObjects.length > 0) {
       const restoredObjects = this.activity()!.sceneObjects.map(obj =>
-        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.size, obj.workspace)
+        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.size, obj.workspace, obj.lookingLeft)
       );
 
       this.activity.set({...this.activity()!, sceneObjects: restoredObjects});
@@ -134,7 +134,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         obj.rotation,
         obj.size,
         obj.workspace,
-        true,
+        obj.lookingLeft,
         img
       );
     } else {

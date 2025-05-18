@@ -58,20 +58,17 @@ export class SceneComponent implements AfterViewInit {
   protected contextMenuY = 0;
   protected contextMenuObject: SceneObject | null = null;
 
-  protected selectedObject= computed(() => {
+  protected selectedObject = computed(() => {
     if (!this.selectedObjectId()) return undefined;
 
     return this.sceneObjects.find(obj => obj.id === this.selectedObjectId());
   });
 
   ngAfterViewInit(): void {
-    this.initCanvas().then(() => {
-      this.setupMouseEvents();
-      this.drawImages();
-    });
+    this.initCanvas();
   }
 
-  private async initCanvas() {
+  private initCanvas() {
     const canvasEl = this.canvas.nativeElement;
     const style = getComputedStyle(canvasEl);
 
@@ -83,8 +80,17 @@ export class SceneComponent implements AfterViewInit {
 
     this.ctx = canvasEl.getContext('2d');
 
-    this.sceneObjects.map(async obj => obj.img = await loadImage(obj.imgSrc));
-    if (this.bgSrc) this.bgImage = await loadImage(this.bgSrc);
+    const imageLoadPromises = this.sceneObjects.map(async obj => obj.img = await loadImage(obj.imgSrc));
+    if (this.bgSrc) {
+      const bgPromise = (async () => this.bgImage = await loadImage(this.bgSrc!));
+      imageLoadPromises.push(bgPromise())
+    }
+
+    Promise.all(imageLoadPromises).then(() => {
+      if (this.sceneObjects.length > 0) this.objectSelected.emit(this.sceneObjects[0].id);
+      this.drawImages()
+    });
+    this.setupMouseEvents();
   }
 
   private setupMouseEvents() {
@@ -111,7 +117,6 @@ export class SceneComponent implements AfterViewInit {
         const mouseX = e.offsetX;
         const mouseY = e.offsetY;
 
-        // Move the image based on mouse position
         this.draggingObject.x = mouseX - this.offsetX;
         this.draggingObject.y = mouseY - this.offsetY;
 
@@ -175,7 +180,7 @@ export class SceneComponent implements AfterViewInit {
         this.ctx.shadowOffsetY = 0;
       }
 
-      if (obj.img) this.ctx.drawImage(obj.img!, -obj.size / 2, -obj.size / 2, obj.size, obj.size);
+      this.ctx.drawImage(obj.img!, -obj.size / 2, -obj.size / 2, obj.size, obj.size);
 
       this.ctx.restore();
     }

@@ -136,6 +136,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         obj.rotation,
         obj.size,
         obj.workspace,
+        true,
         img
       );
     } else {
@@ -152,6 +153,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         0,
         100,
         this.activity()!.workspace,
+        true,
         img
       );
     }
@@ -361,7 +363,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.runningInterpreters = this.objectsCode.size;
 
     this.objectsCode.forEach((v, k) => {
-      console.log('Executing code of object with id ', k);
       this.isRunning.set(true);
       this.runInterpreter(v, k);
     });
@@ -413,7 +414,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
       if (this.runningInterpreters === 0) {
         this.isRunning.set(false);
-        console.log('Execution finished');
       }
     }
   }

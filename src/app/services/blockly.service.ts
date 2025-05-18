@@ -51,5 +51,10 @@ export class BlocklyService {
       const innerCode = javascriptGenerator.statementToCode(block, 'statement');
       return `while (true) {\n${innerCode}}\n`;
     }
+
+    javascriptGenerator.forBlock['movement_set_direction'] = function (block: any) {
+      const direction = block.getFieldValue('direction');
+      return `setDirection("${direction}")\n`;
+    }
   }
 }

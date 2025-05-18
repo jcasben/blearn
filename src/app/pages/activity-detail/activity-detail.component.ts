@@ -97,9 +97,8 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.BLOCK_LIMITS = new Map<string, number>(Object.entries(this.activity()!.toolboxInfo.BLOCK_LIMITS));
 
     if (this.activity()!.sceneObjects.length > 0) {
-
       const restoredObjects = this.activity()!.sceneObjects.map(obj =>
-        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.size, obj.workspace)
+        new SceneObject(obj.id, obj.imgSrc, obj.x, obj.y, obj.rotation, obj.size, obj.workspace, obj.lookingLeft)
       );
 
       this.activity.set({...this.activity()!, sceneObjects: restoredObjects});
@@ -112,7 +111,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.activity.set({...this.activity()!, workspace: jsonWorkspace});
 
     this.activity()!.sceneObjects.forEach(sceneObject => this.generateCode(sceneObject));
-    if (this.activity()!.sceneObjects.length > 0) this.selectSceneObject(this.activity()!.sceneObjects[0].id);
   }
 
   ngOnDestroy(): void {
@@ -136,6 +134,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         obj.rotation,
         obj.size,
         obj.workspace,
+        obj.lookingLeft,
         img
       );
     } else {
@@ -152,6 +151,7 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
         0,
         100,
         this.activity()!.workspace,
+        true,
         img
       );
     }
@@ -361,7 +361,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
     this.runningInterpreters = this.objectsCode.size;
 
     this.objectsCode.forEach((v, k) => {
-      console.log('Executing code of object with id ', k);
       this.isRunning.set(true);
       this.runInterpreter(v, k);
     });
@@ -413,7 +412,6 @@ export class ActivityDetailComponent implements AfterViewInit, OnDestroy {
 
       if (this.runningInterpreters === 0) {
         this.isRunning.set(false);
-        console.log('Execution finished');
       }
     }
   }

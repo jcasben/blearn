@@ -7,13 +7,20 @@ export class SceneObject {
     public rotation: number,
     public size: number,
     public workspace: string,
+    public lookingLeft: boolean = true,
     public img?: HTMLImageElement,
   ) {}
 
   moveForward(steps: number) {
     const radians = (this.rotation * Math.PI) / 180;
-    this.x += Math.cos(radians) * steps;
-    this.y += Math.sin(radians) * steps;
+
+    if (this.lookingLeft) {
+      this.x -= Math.cos(radians) * steps;
+      this.y -= Math.sin(radians) * steps;
+    } else {
+      this.x += Math.cos(radians) * steps;
+      this.y += Math.sin(radians) * steps;
+    }
   }
 
   moveTo(x: number, y: number) {
@@ -21,8 +28,8 @@ export class SceneObject {
     this.y = y;
   }
 
-  setDirection(angle: number) {
-
+  setDirection(direction: 'left' | 'right') {
+    this.lookingLeft = direction === 'left';
   }
 
   turnLeft(angle: number) {

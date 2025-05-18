@@ -146,6 +146,12 @@ export class SceneComponent implements AfterViewInit {
     this.contextMenuObject = obj;
   }
 
+  protected onChangeSelect(event: Event) {
+    const selectElement = event.target as HTMLSelectElement;
+    this.selectedObject()!.lookingLeft = (selectElement.value === 'left');
+    this.drawImages();
+  }
+
   @HostListener('document:click')
   hideContextMenu() {
     this.contextMenuVisible = false;

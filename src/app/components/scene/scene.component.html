@@ -58,6 +58,20 @@
           label="rotation"
           (valueChange)="obj.rotation = $event; drawImages();"
         />
+
+        <label class="flex flex-row items-center space-x-2">
+          <span>direction</span>
+          <select
+            [value]="obj.lookingLeft ? 'left' : 'right'"
+            (change)="onChangeSelect($event)"
+            class="rounded p-2"
+            [disabled]="modeService.getMode() === 'student'"
+          >
+            <option value="left">Left</option>
+            <option value="right">Right</option>
+          </select>
+        </label>
+
       </div>
     }
 

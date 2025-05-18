@@ -166,6 +166,7 @@ export class SceneComponent implements AfterViewInit {
 
       this.ctx.translate(centerX, centerY);
       this.ctx.rotate(angleInRadians);
+      if (!obj.lookingLeft) this.ctx.scale(-1, 1);
 
       if (obj.id === this.selectedObjectId()) {
         this.ctx.shadowColor = 'red';

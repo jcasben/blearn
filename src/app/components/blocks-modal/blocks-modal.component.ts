@@ -19,7 +19,6 @@ export class BlocksModalComponent implements AfterViewInit {
     'event_start',
     'controls_repeat',
     'controls_repeat_forever',
-    'controls_if',
     'controls_wait',
     'movement_jump',
     'movement_turn_left',
